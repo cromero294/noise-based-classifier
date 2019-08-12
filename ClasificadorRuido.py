@@ -154,21 +154,33 @@ class ClasificadorRuido:
         return aciertos/x.shape[0]
 
     def change_class(self, x, y):
+        """
+        Given a data set split in features and classes this method transforms this set into another set.
+        This new set is created based on random noise generation and its classification. The randomization
+        of the new data set is given by the percentage received from the class constructor.
 
-        datos = np.c_[x, y]
+        The randomization is generated changing some data classes and pointing it out in the new class.
+        The new class is calculated comparing the original class with the data randomization. For this new class
+        '1' means "well classified" and '0', the opposite.
 
-        numDatos = datos.shape[0]
-        porcentaje = int(numDatos * self.perc)
+        :param x: features from the original data set
+        :param y: classes from the original data set
+        :return: features and classes from the new data set
+        """
 
-        datos_nuevos = datos.copy()
+        data = np.c_[x, y]
 
-        arrayAleatorio = range(0, numDatos)
+        num_data = data.shape[0]
+        percentage = int(num_data * self.perc)
 
-        shuffle(arrayAleatorio)
+        updated_data = data.copy()
 
-        for num in arrayAleatorio[:porcentaje]:
-            datos_nuevos[num,-1] = 1 - datos_nuevos[num,-1]
+        random_data = range(0, num_data)
+        shuffle(random_data)
 
-        clase_bien_mal_clasificado = [(1.0 if datos_nuevos[i,-1] == datos[i,-1] else 0.0) for i in range(0,numDatos)]
+        for num in random_data[:percentage]:
+            updated_data[num, -1] = 1 - updated_data[num, -1]
 
-        return datos_nuevos, np.array(clase_bien_mal_clasificado)
+        updated_class = [(updated_data[i, -1] == data[i, -1]) for i in range(0, num_data)]
+
+        return updated_data, np.array(updated_class)
