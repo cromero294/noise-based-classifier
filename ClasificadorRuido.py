@@ -13,13 +13,13 @@ class ClasificadorRuido:
         self.perc = perc
 
     def fit(self, x, y):
-        self.clasificadores = []
+        self.classifiers = []
 
         for epoca in range(self.nepocas):
             clfTree = tree.DecisionTreeClassifier()
             X_cambiado, y_cambiado = self.change_class(x, y)
             clfTree.fit(X_cambiado, y_cambiado)
-            self.clasificadores.append(clfTree)
+            self.classifiers.append(clfTree)
 
     def score(self, x, y, class_atrib=None):
         aciertos = 0
@@ -44,7 +44,12 @@ class ClasificadorRuido:
         return prediccs
 
     def predict_proba(self, x, class_atrib=None):
-        clasificacion = []
+        """
+
+        :param x:
+        :param class_atrib:
+        :return:
+        """
         clasificacion_final = [[0, 0] for i in range(x.shape[0])]
 
         if class_atrib == None:
@@ -57,32 +62,27 @@ class ClasificadorRuido:
 
         else:
             if class_atrib == 1:
-                datos = np.ones((x.shape[0], x.shape[1]+1))
+                data = np.ones((x.shape[0], x.shape[1]+1))
             elif class_atrib == 0:
-                datos = np.zeros((x.shape[0], x.shape[1]+1))
+                data = np.zeros((x.shape[0], x.shape[1]+1))
 
-            datos[:,:-1] = x
-            x = datos
+            data[:,:-1] = x
+            x = data
 
-            pred = []
+            predictions = []
 
-            for clasificador in self.clasificadores:
-                aux = clasificador.predict_proba(x)
-                for i,clf in enumerate(aux):
-                    if class_atrib == 1:
-                        clasificacion_final[i][1] += clf[1]
-                        clasificacion_final[i][0] += clf[0]
-                    elif class_atrib == 0:
-                        clasificacion_final[i][1] += clf[0]
-                        clasificacion_final[i][0] += clf[1]
+            # It creates a numpy array out of the mean of the classifications obtained from each single classifier
+            [predictions.append(clf.predict_proba(x)) for clf in self.classifiers]
+            predictions = np.array(predictions).mean(axis=0)
 
-            for i in range(x.shape[0]):
-                clasificacion_final[i][0] /= len(self.clasificadores)
-                clasificacion_final[i][1] /= len(self.clasificadores)
+            # If the class_atrib param is '0', it means the "well classified" class must be exchanged with the "poorly classified" class
+            if class_atrib == 0:
+                predictions[:, [0, 1]] = predictions[:, [1, 0]]
 
-        return clasificacion_final
+        return predictions
 
     def predict_proba_error(self, x, class_atrib=None):
+        # TODO: create an accumulative array out of the classifications just adding them instead of classifying it time after time
         clasificacion = []
 
         if class_atrib == None:
@@ -107,7 +107,7 @@ class ClasificadorRuido:
             datos[:,:-1] = x
             x = datos
 
-            for clasificador in self.clasificadores:
+            for clasificador in self.classifiers:
                 aux = clasificador.predict_proba(x)
                 if class_atrib == 1:
                     self.pred_unos.append(aux)
@@ -116,7 +116,7 @@ class ClasificadorRuido:
 
     def score_error(self, x, y, n_classifiers=None, class_atrib=None):
         if n_classifiers == None:
-            n_classifiers = len(self.clasificadores)
+            n_classifiers = len(self.classifiers)
 
         aux = []
 

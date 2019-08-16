@@ -1,15 +1,15 @@
 from ClasificadorRuido import ClasificadorRuido
-from Datos import *
-import EstrategiaParticionado
-from sklearn.ensemble import RandomForestClassifier
+# from Datos import *
+# import EstrategiaParticionado
+# from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import make_moons, make_circles
-from sklearn.model_selection import StratifiedKFold
+# from sklearn.model_selection import StratifiedKFold
 
-from sklearn import tree
-import numpy as np
-
-import matplotlib.pyplot as plt
-import matplotlib
+# from sklearn import tree
+# import numpy as np
+#
+# import matplotlib.pyplot as plt
+# import matplotlib
 
 # # X,y=make_moons(n_samples=500, shuffle=True, noise=0.5, random_state=None)
 # # Xt,yt=make_moons(n_samples=20000, shuffle=True, noise=0.5, random_state=None)
@@ -54,24 +54,31 @@ import matplotlib
 # x1,x2,y = make_moons(n_samples=500, shuffle=True, noise=0.2, random_state=None)
 # xt1,xt2,yt = createDataSet(500,"twonorm",ymargin=0.0,noise=0.2,output_boundary=False)
 # x,y = make_moons(n_samples=500, shuffle=True, noise=0.2, random_state=None)
-x,y = make_circles(n_samples=500, noise=0.2, factor=0.2, random_state=None)
+# x,y = make_circles(n_samples=500, noise=0.2, factor=0.2, random_state=None)
 
 # X = np.c_[x1, x2]
 # Xt = np.c_[xt1, xt2]
 
-colors = ['blue', 'red']
+# colors = ['blue', 'red']
 
-print x
+# print x
 
-plt.scatter(x[:,0], x[:,1], marker = 'o', c=np.array(y), cmap=matplotlib.colors.ListedColormap(colors))
+# plt.scatter(x[:,0], x[:,1], marker = 'o', c=np.array(y), cmap=matplotlib.colors.ListedColormap(colors))
 # plt.scatter(np.array(xt1), np.array(xt2), marker = 'o', c=np.array(yt), cmap=matplotlib.colors.ListedColormap(colors))
 # plt.show()
-plt.savefig("Imagenes/ejemplo_circles.png")
+# plt.savefig("Imagenes/ejemplo_circles.png")
 
 # clfRandom.fit(X,y)
-#
-# clf.fit(X, y)
+
+X,y=make_moons(n_samples=500, shuffle=True, noise=0.5, random_state=None)
+Xt,yt=make_moons(n_samples=200, shuffle=True, noise=0.5, random_state=None)
+
+clf = ClasificadorRuido()
+
+clf.fit(X, y)
 # clf.predict_proba_error(Xt)
+
+clf.predict_proba(Xt, 0)
 #
 # print "Ceros: " + str(clf.score(Xt, yt, 0))
 # print "Unos: " + str(clf.score(Xt, yt, 1))
