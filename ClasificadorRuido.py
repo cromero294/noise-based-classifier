@@ -44,21 +44,22 @@ class ClasificadorRuido:
         return prediccs
 
     def predict_proba(self, x, class_atrib=None):
+        # TODO: change parameter name from class_atrib to suggested_class.
         """
+        This method calculates the probability that a data is well classified or not. It adds a new feature
+        to the dataset depending on the suggested_class attribute.
 
-        :param x:
-        :param class_atrib:
+        :param x: data to be classified
+        :param suggested_class:
         :return:
         """
-        clasificacion_final = [[0, 0] for i in range(x.shape[0])]
+        predictions = []
 
         if class_atrib == None:
             probs1 = self.predict_proba(x, 1)
             probs0 = self.predict_proba(x, 0)
 
-            for i in range(x.shape[0]):
-                clasificacion_final[i][0] += (probs0[i][0] + probs1[i][0])/2
-                clasificacion_final[i][1] += (probs0[i][1] + probs1[i][1])/2
+            predictions = (probs0 + probs1) / 2
 
         else:
             if class_atrib == 1:
@@ -68,8 +69,6 @@ class ClasificadorRuido:
 
             data[:,:-1] = x
             x = data
-
-            predictions = []
 
             # It creates a numpy array out of the mean of the classifications obtained from each single classifier
             [predictions.append(clf.predict_proba(x)) for clf in self.classifiers]

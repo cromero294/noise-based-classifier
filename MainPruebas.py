@@ -70,7 +70,7 @@ from sklearn.datasets import make_moons, make_circles
 
 # clfRandom.fit(X,y)
 
-X,y=make_moons(n_samples=500, shuffle=True, noise=0.5, random_state=None)
+X,y=make_moons(n_samples=20000, shuffle=True, noise=0.5, random_state=None)
 Xt,yt=make_moons(n_samples=200, shuffle=True, noise=0.5, random_state=None)
 
 clf = ClasificadorRuido()
@@ -78,11 +78,11 @@ clf = ClasificadorRuido()
 clf.fit(X, y)
 # clf.predict_proba_error(Xt)
 
-clf.predict_proba(Xt, 0)
-#
-# print "Ceros: " + str(clf.score(Xt, yt, 0))
-# print "Unos: " + str(clf.score(Xt, yt, 1))
-# print "Score: " + str(clf.score(Xt, yt))
+#clf.predict_proba(Xt)
+
+print "Ceros: " + str(clf.score(Xt, yt, 0))
+print "Unos: " + str(clf.score(Xt, yt, 1))
+print "Score: " + str(clf.score(Xt, yt))
 # # print "Score error 1: " + str(clf.score_error(Xt, yt, 1))
 # print "Score error 100: " + str(clf.score_error(Xt, yt))
 # print "Random forest: " + str(clfRandom.score(Xt, yt))
