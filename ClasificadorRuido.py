@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+from __future__ import division
+
 import numpy as np
 import re
 import sys
@@ -21,50 +23,41 @@ class ClasificadorRuido:
             clfTree.fit(X_cambiado, y_cambiado)
             self.classifiers.append(clfTree)
 
-    def score(self, x, y, class_atrib=None):
-        aciertos = 0
+    def score(self, x, y, suggested_class=None):
+        return sum([1 for i,prediction in enumerate(self.predict(x, suggested_class)) if prediction == y[i]])/x.shape[0]
 
-        pre = self.predict(x, class_atrib)
+    def predict(self, x, suggested_class=None):
+        predictions = []
 
-        for i,pred in enumerate(pre):
-            if pred == y[i]:
-                aciertos += 1.
-
-        return aciertos/x.shape[0]
-
-    def predict(self, x, class_atrib=None):
-        prediccs = []
-
-        for pred in self.predict_proba(x, class_atrib):
+        for pred in self.predict_proba(x, suggested_class):
             if pred[0] > pred[1]:
-                prediccs.append(0.)
+                predictions.append(0.)
             else:
-                prediccs.append(1.)
+                predictions.append(1.)
 
-        return prediccs
+        return np.array(predictions)
 
-    def predict_proba(self, x, class_atrib=None):
-        # TODO: change parameter name from class_atrib to suggested_class.
+    def predict_proba(self, x, suggested_class=None):
         """
         This method calculates the probability that a data is well classified or not. It adds a new feature
         to the dataset depending on the suggested_class attribute.
 
         :param x: data to be classified
-        :param suggested_class:
-        :return:
+        :param suggested_class: new attribute to be added
+        :return: probabilities that a data is well classified or not
         """
         predictions = []
 
-        if class_atrib == None:
+        if suggested_class == None:
             probs1 = self.predict_proba(x, 1)
             probs0 = self.predict_proba(x, 0)
 
             predictions = (probs0 + probs1) / 2
 
         else:
-            if class_atrib == 1:
+            if suggested_class == 1:
                 data = np.ones((x.shape[0], x.shape[1]+1))
-            elif class_atrib == 0:
+            elif suggested_class == 0:
                 data = np.zeros((x.shape[0], x.shape[1]+1))
 
             data[:,:-1] = x
@@ -74,8 +67,9 @@ class ClasificadorRuido:
             [predictions.append(clf.predict_proba(x)) for clf in self.classifiers]
             predictions = np.array(predictions).mean(axis=0)
 
-            # If the class_atrib param is '0', it means the "well classified" class must be exchanged with the "poorly classified" class
-            if class_atrib == 0:
+            # If the suggested_class param is '0', it means the "well classified" class must be exchanged with the
+            # "poorly classified" class
+            if suggested_class == 0:
                 predictions[:, [0, 1]] = predictions[:, [1, 0]]
 
         return predictions
