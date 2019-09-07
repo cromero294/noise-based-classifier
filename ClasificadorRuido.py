@@ -2,31 +2,52 @@
 from __future__ import division
 
 import numpy as np
-import re
-import sys
 from random import *
 from sklearn import tree
-from scipy import stats
 
 class ClasificadorRuido:
 
     def __init__(self, n_trees=101, perc=0.5):
-        self.nepocas = n_trees
+        self.n_trees = n_trees
         self.perc = perc
 
     def fit(self, x, y):
+        """
+        This method is used to fit each one of the decision trees the random noise classifier is composed with.
+        This is the way to fit the complete classifier and it is compulsory to carry on with the data classification.
+
+        :param x: original features from the dataset
+        :param y: original classes from the dataset
+        """
         self.classifiers = []
 
-        for epoca in range(self.nepocas):
-            clfTree = tree.DecisionTreeClassifier()
-            X_cambiado, y_cambiado = self.change_class(x, y)
-            clfTree.fit(X_cambiado, y_cambiado)
-            self.classifiers.append(clfTree)
+        for classifier in range(self.n_trees):
+            tree_clf = tree.DecisionTreeClassifier()
+            modified_x, modified_y = self.change_class(x, y)
+            tree_clf.fit(modified_x, modified_y)
+            self.classifiers.append(tree_clf)
 
     def score(self, x, y, suggested_class=None):
+        """
+        This method is used to calculate the classifier accuracy comparing the obtained classes with the original
+        ones from the dataset.
+
+        :param x: original features from the dataset
+        :param y: original classes from the dataset
+        :param suggested_class: a new feature added to classify the examples
+        :return: classifier accuracy
+        """
         return sum([1 for i,prediction in enumerate(self.predict(x, suggested_class)) if prediction == y[i]])/x.shape[0]
 
     def predict(self, x, suggested_class=None):
+        """
+        This method is used to generate the class predictions from each example to be classified.
+        It uses the method predict_proba to calculate the probabilities that a data is well classified or not.
+
+        :param x: original features from the dataset
+        :param suggested_class: a new feature added to classify the examples
+        :return: an array with the predicted class for each example from the dataset
+        """
         predictions = []
 
         for pred in self.predict_proba(x, suggested_class):
@@ -43,7 +64,7 @@ class ClasificadorRuido:
         to the dataset depending on the suggested_class attribute.
 
         :param x: data to be classified
-        :param suggested_class: new attribute to be added
+        :param suggested_class: new feature to be added
         :return: probabilities that a data is well classified or not
         """
         predictions = []
@@ -160,7 +181,6 @@ class ClasificadorRuido:
         :param y: classes from the original data set
         :return: features and classes from the new data set
         """
-
         data = np.c_[x, y]
 
         num_data = data.shape[0]
