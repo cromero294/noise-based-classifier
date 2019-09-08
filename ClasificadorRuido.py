@@ -7,7 +7,7 @@ from sklearn import tree
 
 class ClasificadorRuido:
 
-    def __init__(self, n_trees=101, perc=0.5):
+    def __init__(self, n_trees=100, perc=0.5):
         self.n_trees = n_trees
         self.perc = perc
 
@@ -95,11 +95,11 @@ class ClasificadorRuido:
 
         return predictions
 
-    def predict_proba_error(self, x, class_atrib=None):
-        # TODO: create an accumulative array out of the classifications just adding them instead of classifying it time after time
+    def predict_proba_error(self, x, n_classifiers=100, suggested_class=None):
+        # TODO: keep checking this to be sure if it works correctly
         clasificacion = []
 
-        if class_atrib == None:
+        if suggested_class == None:
             probs1 = self.predict_proba_error(x, 1)
             probs0 = self.predict_proba_error(x, 0)
 
@@ -111,24 +111,33 @@ class ClasificadorRuido:
                 self.pred.append(predaux)
 
         else:
-            if class_atrib == 1:
+            if suggested_class == 1:
                 datos = np.ones((x.shape[0], x.shape[1]+1))
                 self.pred_unos = []
-            elif class_atrib == 0:
+            elif suggested_class == 0:
                 datos = np.zeros((x.shape[0], x.shape[1]+1))
                 self.pred_ceros = []
 
             datos[:,:-1] = x
             x = datos
 
-            for clasificador in self.classifiers:
-                aux = clasificador.predict_proba(x)
-                if class_atrib == 1:
-                    self.pred_unos.append(aux)
-                elif class_atrib == 0:
-                    self.pred_ceros.append(aux)
+            predictions = []
+
+            [predictions.append(clf.predict_proba(x)) for clf in self.classifiers]
+            predictions = np.array(predictions)
+
+            for i in range(n_classifiers-1, -1, -1):
+                predictions[i,:,:] = (predictions[:i+1,:,:].sum(axis=0))
+                predictions[i,:,:] /= i+1
+
+            if suggested_class == 1:
+                self.pred_unos = predictions
+            elif suggested_class == 0:
+                predictions[:, [0, 1]] = predictions[:, [1, 0]]
+                self.pred_ceros = predictions
 
     def score_error(self, x, y, n_classifiers=None, class_atrib=None):
+        # TODO: if the mean is already saved this method only needs to return the classifier accuracy
         if n_classifiers == None:
             n_classifiers = len(self.classifiers)
 
