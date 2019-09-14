@@ -95,86 +95,73 @@ class ClasificadorRuido:
 
         return predictions
 
-    def predict_proba_error(self, x, n_classifiers=100, suggested_class=None):
-        # TODO: keep checking this to be sure if it works correctly
-        clasificacion = []
-
+    def predict_proba_error(self, x, suggested_class=None):
+        """
+        
+        :param x:
+        :param suggested_class:
+        :return:
+        """
         if suggested_class == None:
-            probs1 = self.predict_proba_error(x, 1)
-            probs0 = self.predict_proba_error(x, 0)
+            # TODO: fix this to be nicer
+            probs1 = self.predict_proba_error(x, suggested_class=1)
+            probs0 = self.predict_proba_error(x, suggested_class=0)
 
-            self.pred = []
-            for z,y in zip(self.pred_ceros,self.pred_unos):
+            self.predictions = []
+            for z,y in zip(probs0, probs1):
                 predaux = []
                 for i in range(len(z)):
                     predaux.append([(z[i][1] + y[i][0])/2, (z[i][0] + y[i][1])/2])
-                self.pred.append(predaux)
+                self.predictions.append(predaux)
+
+            self.predictions = np.array(self.predictions)
 
         else:
             if suggested_class == 1:
                 datos = np.ones((x.shape[0], x.shape[1]+1))
-                self.pred_unos = []
             elif suggested_class == 0:
                 datos = np.zeros((x.shape[0], x.shape[1]+1))
-                self.pred_ceros = []
 
             datos[:,:-1] = x
             x = datos
 
-            predictions = []
+            self.predictions = []
 
-            [predictions.append(clf.predict_proba(x)) for clf in self.classifiers]
-            predictions = np.array(predictions)
+            [self.predictions.append(clf.predict_proba(x)) for clf in self.classifiers]
+            self.predictions = np.array(self.predictions)
 
-            for i in range(n_classifiers-1, -1, -1):
-                predictions[i,:,:] = (predictions[:i+1,:,:].sum(axis=0))
-                predictions[i,:,:] /= i+1
+            for i in range(len(self.classifiers)-1, -1, -1):
+                self.predictions[i,:,:] = (self.predictions[:i+1,:,:].sum(axis=0))
+                self.predictions[i,:,:] /= i+1
 
-            if suggested_class == 1:
-                self.pred_unos = predictions
-            elif suggested_class == 0:
-                predictions[:, [0, 1]] = predictions[:, [1, 0]]
-                self.pred_ceros = predictions
+            if suggested_class == 0:
+                self.predictions[:, [0, 1]] = self.predictions[:, [1, 0]]
 
-    def score_error(self, x, y, n_classifiers=None, class_atrib=None):
-        # TODO: if the mean is already saved this method only needs to return the classifier accuracy
+        return self.predictions
+
+    def score_error(self, x, y, n_classifiers=100):
+        """
+
+
+        :param x:
+        :param y:
+        :param n_classifiers:
+        :param class_atrib:
+        :return:
+        """
         if n_classifiers == None:
             n_classifiers = len(self.classifiers)
 
-        aux = []
+        n_classifiers -= 1
 
-        if class_atrib == 1:
-            predaux = self.pred_unos
-        if class_atrib == 0:
-            predaux = self.pred_ceros
-        if class_atrib == None:
-            predaux = self.pred
+        sum = 0
+        for i,pred in enumerate(self.predictions[n_classifiers, :, :]):
+            if pred[0] > pred[1] and y[i] == 0:
+                sum += 1
+            elif pred[1] >= pred[0] and y[i] == 1:
+                sum += 1
 
-        clasificacion_final = [[0, 0] for i in range(x.shape[0])]
-
-        for pred in predaux[:n_classifiers]:
-            for i,dato in enumerate(pred):
-                if class_atrib != 0:
-                    clasificacion_final[i][1] += dato[1]
-                    clasificacion_final[i][0] += dato[0]
-                else:
-                    clasificacion_final[i][1] += dato[0]
-                    clasificacion_final[i][0] += dato[1]
-
-        aciertos = 0
-
-        for i in range(x.shape[0]):
-            clasificacion_final[i][0] /= n_classifiers
-            clasificacion_final[i][1] /= n_classifiers
-
-            prediccion_auxiliar = 1
-            if clasificacion_final[i][0] > clasificacion_final[i][1]:
-                prediccion_auxiliar = 0
-
-            if prediccion_auxiliar == y[i]:
-                aciertos += 1.0
-
-        return aciertos/x.shape[0]
+        return sum / x.shape[0]
 
     def change_class(self, x, y):
         """
