@@ -48,15 +48,7 @@ class ClasificadorRuido:
         :param suggested_class: a new feature added to classify the examples
         :return: an array with the predicted class for each example from the dataset
         """
-        predictions = []
-
-        for pred in self.predict_proba(x, suggested_class):
-            if pred[0] > pred[1]:
-                predictions.append(0.)
-            else:
-                predictions.append(1.)
-
-        return np.array(predictions)
+        return np.array([0. if pred[0] > pred[1] else 1. for pred in self.predict_proba(x, suggested_class)])
 
     def predict_proba(self, x, suggested_class=None):
         """
@@ -97,7 +89,7 @@ class ClasificadorRuido:
 
     def predict_proba_error(self, x, suggested_class=None):
         """
-        
+
         :param x:
         :param suggested_class:
         :return:
@@ -140,6 +132,7 @@ class ClasificadorRuido:
         return self.predictions
 
     def score_error(self, x, y, n_classifiers=100):
+        # TODO: This is not working as it should
         """
 
 
@@ -154,14 +147,7 @@ class ClasificadorRuido:
 
         n_classifiers -= 1
 
-        sum = 0
-        for i,pred in enumerate(self.predictions[n_classifiers, :, :]):
-            if pred[0] > pred[1] and y[i] == 0:
-                sum += 1
-            elif pred[1] >= pred[0] and y[i] == 1:
-                sum += 1
-
-        return sum / x.shape[0]
+        return sum([1 for i,pred in enumerate(self.predictions[n_classifiers, :, :]) if (pred[0] > pred[1] and y[i] == 0) or (pred[1] >= pred[0] and y[i] == 1)]) / x.shape[0]
 
     def change_class(self, x, y):
         """

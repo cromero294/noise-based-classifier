@@ -71,14 +71,14 @@ from sklearn.datasets import make_moons, make_circles
 # clfRandom.fit(X,y)
 
 X,y=make_moons(n_samples=100, shuffle=True, noise=0.5, random_state=None)
-Xt,yt=make_moons(n_samples=2000, shuffle=True, noise=0.5, random_state=None)
+Xt,yt=make_moons(n_samples=2, shuffle=True, noise=0.5, random_state=None)
 
 clf = ClasificadorRuido()
 
 clf.fit(X, y)
 clf.predict_proba_error(Xt)
 
-# clf.predict_proba(Xt)
+# clf.predict(Xt)
 
 # print "Ceros: " + str(clf.score(Xt, yt, 0))
 # print "Unos: " + str(clf.score(Xt, yt, 1))
