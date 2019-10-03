@@ -71,7 +71,7 @@ from sklearn.datasets import make_moons, make_circles
 # clfRandom.fit(X,y)
 
 X,y=make_moons(n_samples=100, shuffle=True, noise=0.5, random_state=None)
-Xt,yt=make_moons(n_samples=2, shuffle=True, noise=0.5, random_state=None)
+Xt,yt=make_moons(n_samples=200, shuffle=True, noise=0.5, random_state=None)
 
 clf = ClasificadorRuido()
 

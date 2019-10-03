@@ -89,24 +89,17 @@ class ClasificadorRuido:
 
     def predict_proba_error(self, x, suggested_class=None):
         """
+        This method calculates a matrix which contains the probabilities of each example cumulatively.
 
-        :param x:
-        :param suggested_class:
-        :return:
+        :param x: the original features from the dataset
+        :param suggested_class: the class the classifier uses as new feature
+        :return: the final probabilities matrix
         """
         if suggested_class == None:
-            # TODO: fix this to be nicer
             probs1 = self.predict_proba_error(x, suggested_class=1)
             probs0 = self.predict_proba_error(x, suggested_class=0)
 
-            self.predictions = []
-            for z,y in zip(probs0, probs1):
-                predaux = []
-                for i in range(len(z)):
-                    predaux.append([(z[i][1] + y[i][0])/2, (z[i][0] + y[i][1])/2])
-                self.predictions.append(predaux)
-
-            self.predictions = np.array(self.predictions)
+            self.predictions = (probs0 + probs1) / 2
 
         else:
             if suggested_class == 1:
@@ -127,20 +120,20 @@ class ClasificadorRuido:
                 self.predictions[i,:,:] /= i+1
 
             if suggested_class == 0:
-                self.predictions[:, [0, 1]] = self.predictions[:, [1, 0]]
+                self.predictions[:, :, [0, 1]] = self.predictions[:, :, [1, 0]]
 
         return self.predictions
 
     def score_error(self, x, y, n_classifiers=100):
-        # TODO: This is not working as it should
         """
+        With this method we are able to see what is going on with the classification of the examples for each classifier.
+        This method allows us to calculate the score obtained using the amount of classifiers we want up to the maximum
+        of classifiers with which it was declared.
 
-
-        :param x:
-        :param y:
-        :param n_classifiers:
-        :param class_atrib:
-        :return:
+        :param x: original features dataset
+        :param y: original classes from the dataset
+        :param n_classifiers: number of classifiers used to calculate the score
+        :return: score obtained
         """
         if n_classifiers == None:
             n_classifiers = len(self.classifiers)
