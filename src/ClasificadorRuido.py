@@ -1,9 +1,10 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from __future__ import division
 
 import numpy as np
 from random import *
 from sklearn import tree
+
 
 class ClasificadorRuido:
 
@@ -37,7 +38,7 @@ class ClasificadorRuido:
         :param suggested_class: a new feature added to classify the examples
         :return: classifier accuracy
         """
-        return sum([1 for i,prediction in enumerate(self.predict(x, suggested_class)) if prediction == y[i]])/x.shape[0]
+        return sum([1 for i, prediction in enumerate(self.predict(x, suggested_class)) if prediction == y[i]])/x.shape[0]
 
     def predict(self, x, suggested_class=None):
         """
@@ -61,7 +62,7 @@ class ClasificadorRuido:
         """
         predictions = []
 
-        if suggested_class == None:
+        if suggested_class is None:
             probs1 = self.predict_proba(x, 1)
             probs0 = self.predict_proba(x, 0)
 
@@ -73,7 +74,7 @@ class ClasificadorRuido:
             elif suggested_class == 0:
                 data = np.zeros((x.shape[0], x.shape[1]+1))
 
-            data[:,:-1] = x
+            data[:, :-1] = x
             x = data
 
             # It creates a numpy array out of the mean of the classifications obtained from each single classifier
@@ -95,7 +96,7 @@ class ClasificadorRuido:
         :param suggested_class: the class the classifier uses as new feature
         :return: the final probabilities matrix
         """
-        if suggested_class == None:
+        if suggested_class is None:
             probs1 = self.predict_proba_error(x, suggested_class=1)
             probs0 = self.predict_proba_error(x, suggested_class=0)
 
@@ -103,12 +104,12 @@ class ClasificadorRuido:
 
         else:
             if suggested_class == 1:
-                datos = np.ones((x.shape[0], x.shape[1]+1))
+                data = np.ones((x.shape[0], x.shape[1]+1))
             elif suggested_class == 0:
-                datos = np.zeros((x.shape[0], x.shape[1]+1))
+                data = np.zeros((x.shape[0], x.shape[1]+1))
 
-            datos[:,:-1] = x
-            x = datos
+            data[:, :-1] = x
+            x = data
 
             self.predictions = []
 
@@ -116,8 +117,8 @@ class ClasificadorRuido:
             self.predictions = np.array(self.predictions)
 
             for i in range(len(self.classifiers)-1, -1, -1):
-                self.predictions[i,:,:] = (self.predictions[:i+1,:,:].sum(axis=0))
-                self.predictions[i,:,:] /= i+1
+                self.predictions[i, :, :] = (self.predictions[:i+1, :, :].sum(axis=0))
+                self.predictions[i, :, :] /= i+1
 
             if suggested_class == 0:
                 self.predictions[:, :, [0, 1]] = self.predictions[:, :, [1, 0]]
@@ -135,12 +136,12 @@ class ClasificadorRuido:
         :param n_classifiers: number of classifiers used to calculate the score
         :return: score obtained
         """
-        if n_classifiers == None:
+        if n_classifiers is None:
             n_classifiers = len(self.classifiers)
 
         n_classifiers -= 1
 
-        return sum([1 for i,pred in enumerate(self.predictions[n_classifiers, :, :]) if (pred[0] > pred[1] and y[i] == 0) or (pred[1] >= pred[0] and y[i] == 1)]) / x.shape[0]
+        return sum([1 for i, pred in enumerate(self.predictions[n_classifiers, :, :]) if (pred[0] > pred[1] and y[i] == 0) or (pred[1] >= pred[0] and y[i] == 1)]) / x.shape[0]
 
     def change_class(self, x, y):
         """

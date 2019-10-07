@@ -1,8 +1,9 @@
-from ClasificadorRuido import ClasificadorRuido
+from src.ClasificadorRuido import ClasificadorRuido
 # from Datos import *
 # import EstrategiaParticionado
 # from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import make_moons, make_circles
+from sklearn.datasets import make_moons
+
 # from sklearn.model_selection import StratifiedKFold
 
 # from sklearn import tree

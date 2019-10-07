@@ -5,13 +5,8 @@ Created on Sun Nov 11 16:13:00 2018
 @author: Mario Calle Romero
 """
 from __future__ import division
-from Datos import Datos
-from ClasificadorRuido import ClasificadorRuido
-from sklearn import tree
-import EstrategiaParticionado
-import numpy as np
-import random
-from sklearn.datasets import make_moons, make_circles, make_classification
+from src.ClasificadorRuido import ClasificadorRuido
+from sklearn.datasets import make_circles
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 

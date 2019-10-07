@@ -1,20 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-from ClasificadorRuido import *
-import numpy as np
-import random
-from plotModel import *
-from Datos import *
+from lib.plotModel import *
+from lib.Datos import *
 from sklearn import tree
-from sklearn.datasets import make_moons, make_circles, make_classification
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
-
-import matplotlib.pyplot as plt
-import matplotlib
-
-from scipy import stats
 
 try:
     dataset = Datos("Datasets/tic-tac-toe.data")

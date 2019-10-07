@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-from ClasificadorRuido import *
-import numpy as np
-import random
-from plotModel import *
-from Datos import *
-from sklearn.datasets import make_moons, make_circles, make_classification
+from lib.plotModel import *
+from lib.Datos import *
+from sklearn.datasets import make_moons
 
 import matplotlib.pyplot as plt
-import matplotlib
 
 try:
     # x1,x2,y = createDataSet(500,"twonorm",ymargin=0.0,noise=0.2,output_boundary=False)
