@@ -3,7 +3,6 @@ import lib.properties as properties
 
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import make_moons
-import numpy as np
 import pandas as pd
 import pandas_ml as pml
 import matplotlib.pyplot as plt
@@ -15,9 +14,11 @@ def get_data():
     if len(sys.argv) > 1:
         try:
             dataset = pd.read_csv(properties.DATASET_DIRECTORY + sys.argv[1])
+            cat_columns = dataset.select_dtypes(['object']).columns
+            dataset[cat_columns] = dataset[cat_columns].astype('category')
+            dataset[cat_columns] = dataset[cat_columns].apply(lambda x: x.cat.codes)
             dataset = dataset.values
             X, y = dataset[:,:-1], dataset[:,-1]
-            # TODO: X and y must be non categorical values
         except IOError:
             print "File \"{}\" does not exist.".format(sys.argv[1])
             return
@@ -38,7 +39,9 @@ def main():
     y_pred = clf.predict(X_test, suggested_class=None)
 
     confusion_matrix = pml.ConfusionMatrix(y_test, y_pred)
-    print "Confusion matrix:\n%s" % confusion_matrix
+    print "----------------------------------------------"
+    print "{} Confusion matrix:\n{}\n{}\n".format(properties.COLOR_BLUE, properties.END_C, confusion_matrix)
+    print "{} Score:{} {}".format(properties.COLOR_BLUE, properties.END_C, clf.score(X_test, y_test, suggested_class=None))
 
     confusion_matrix.plot()
     plt.show()

@@ -24,7 +24,7 @@ class ClasificadorRuido:
 
         for classifier in range(self.n_trees):
             tree_clf = tree.DecisionTreeClassifier()
-            modified_x, modified_y = self.change_class(x, y)
+            modified_x, modified_y = self._change_class(x, y)
             tree_clf.fit(modified_x, modified_y)
             self.classifiers.append(tree_clf)
 
@@ -143,7 +143,7 @@ class ClasificadorRuido:
 
         return sum([1 for i, pred in enumerate(self.predictions[n_classifiers, :, :]) if (pred[0] > pred[1] and y[i] == 0) or (pred[1] >= pred[0] and y[i] == 1)]) / x.shape[0]
 
-    def change_class(self, x, y):
+    def _change_class(self, x, y):
         """
         Given a data set split in features and classes this method transforms this set into another set.
         This new set is created based on random noise generation and its classification. The randomization
@@ -169,6 +169,29 @@ class ClasificadorRuido:
 
         for num in random_data[:percentage]:
             updated_data[num, -1] = 1 - updated_data[num, -1]
+
+        updated_class = [(updated_data[i, -1] == data[i, -1]) for i in range(0, num_data)]
+
+        return updated_data, np.array(updated_class)
+
+    def _change_non_binary_class(self, x, y):
+        data = np.c_[x, y]
+
+        num_data = data.shape[0]
+        percentage = int(num_data * self.perc)
+
+        updated_data = data.copy()
+
+        random_data = range(0, num_data)
+        shuffle(random_data)
+
+        classes = list(set(y))
+
+        for num in random_data[:percentage]:
+            prev_class = updated_data[num, -1]
+            classes_without_prev_class = classes[:]  # copy classes list
+            classes_without_prev_class.remove(prev_class)
+            updated_data[num, -1] = choice(classes_without_prev_class)
 
         updated_class = [(updated_data[i, -1] == data[i, -1]) for i in range(0, num_data)]
 
