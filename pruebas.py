@@ -37,13 +37,13 @@ def main():
 
     clf = ClasificadorRuido(n_trees=100, perc=0.5)
 
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test, suggested_class=None)
+    clf.fit_multiclass(X_train, y_train)
+    y_pred = clf.predict_multiclass(X_test)
 
-    confusion_matrix = pml.ConfusionMatrix(y_test, y_pred)
+    confusion_matrix = pml.ConfusionMatrix(map(lambda x: str(x), y_test), y_pred)
     print "----------------------------------------------"
     print "{} Confusion matrix:\n{}\n{}\n".format(properties.COLOR_BLUE, properties.END_C, confusion_matrix)
-    print "{} Score:{} {}".format(properties.COLOR_BLUE, properties.END_C, clf.score(X_test, y_test, suggested_class=None))
+    print "{} Score:{} {}".format(properties.COLOR_BLUE, properties.END_C, clf.score_multiclass(X_test, y_test))
 
     confusion_matrix.plot()
     plt.show()

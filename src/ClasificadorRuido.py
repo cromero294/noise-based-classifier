@@ -4,7 +4,7 @@ from __future__ import division
 import numpy as np
 from random import *
 from sklearn import tree
-
+import operator
 
 class ClasificadorRuido:
 
@@ -21,6 +21,7 @@ class ClasificadorRuido:
         :param y: original classes from the dataset
         """
         self.classifiers = []
+        self.classes = np.unique(y)
 
         for classifier in range(self.n_trees):
             tree_clf = tree.DecisionTreeClassifier()
@@ -85,6 +86,10 @@ class ClasificadorRuido:
             # "poorly classified" class
             if suggested_class == 0:
                 predictions[:, [0, 1]] = predictions[:, [1, 0]]
+
+            # QUITANDO ESTA PARTE DEL CODIGO Y PONIENDO EN predict EL CODIGO SIGUIENTE:
+            # return np.array([1 - suggested_class if pred[0] > pred[1] else suggested_class for pred in self.predict_proba(x, suggested_class)])
+            # SE CONSIGUE RESOLVER EL PROBLEMA PARA DOS CLASES SIN TENER EN CUENTA SUGGESTED CLASS = NONE HAY QUE DARLE VUELTAS A ESTO PARA QUE SEA MULTICLASE
 
         return predictions
 
@@ -173,6 +178,43 @@ class ClasificadorRuido:
         updated_class = [(updated_data[i, -1] == data[i, -1]) for i in range(0, num_data)]
 
         return updated_data, np.array(updated_class)
+
+    def fit_multiclass(self, x, y):
+        self.classifiers = []
+        self.classes = np.unique(y)
+
+        for classifier in range(self.n_trees):
+            tree_clf = tree.DecisionTreeClassifier()
+            modified_x, modified_y = self._change_non_binary_class(x, y)
+            tree_clf.fit(modified_x, modified_y)
+            self.classifiers.append(tree_clf)
+
+    def score_multiclass(self, x, y):
+        return sum([1 for i, prediction in enumerate(self.predict_multiclass(x)) if prediction == str(y[i])])/x.shape[0]
+
+    def predict_multiclass(self, x):
+        predictions = []
+        for pred in self.predict_proba_multiclass(x):
+            predictions.append(max(pred.iteritems(), key=operator.itemgetter(1))[0])
+
+        return np.array(predictions)
+
+    def predict_proba_multiclass(self, x):
+        predictions = [{} for _ in range(x.shape[0])]
+
+        for cl in self.classes:
+            self.predictions = []
+
+            _x = x.copy()
+            _x = np.c_[_x, np.repeat(cl, x.shape[0])]
+
+            [self.predictions.append(clf.predict_proba(_x)) for clf in self.classifiers]
+            self.predictions = np.array(self.predictions).mean(axis=0)
+
+            for i,pred in enumerate(self.predictions):
+                predictions[i][str(cl)] = pred[1]
+
+        return predictions
 
     def _change_non_binary_class(self, x, y):
         data = np.c_[x, y]
