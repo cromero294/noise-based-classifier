@@ -20,12 +20,25 @@ class ClasificadorRuido:
         :param x: original features from the dataset
         :param y: original classes from the dataset
         """
-        self.classifiers = []
         self.classes = np.unique(y)
+
+        self._fit_binary(x, y) if len(self.classes) <= 2 else self._fit_multiclass(x, y)
+
+    def _fit_binary(self, x, y):
+        self.classifiers = []
 
         for classifier in range(self.n_trees):
             tree_clf = tree.DecisionTreeClassifier()
             modified_x, modified_y = self._change_class(x, y)
+            tree_clf.fit(modified_x, modified_y)
+            self.classifiers.append(tree_clf)
+
+    def _fit_multiclass(self, x, y):
+        self.classifiers = []
+
+        for classifier in range(self.n_trees):
+            tree_clf = tree.DecisionTreeClassifier()
+            modified_x, modified_y = self._change_non_binary_class(x, y)
             tree_clf.fit(modified_x, modified_y)
             self.classifiers.append(tree_clf)
 
@@ -39,7 +52,13 @@ class ClasificadorRuido:
         :param suggested_class: a new feature added to classify the examples
         :return: classifier accuracy
         """
+        return self._score_binary(x, y, suggested_class) if len(self.classes) <= 2 else self._score_multiclass(x, y)
+
+    def _score_binary(self, x, y, suggested_class=None):
         return sum([1 for i, prediction in enumerate(self.predict(x, suggested_class)) if prediction == y[i]])/x.shape[0]
+
+    def _score_multiclass(self, x, y):
+        return sum([1 for i, prediction in enumerate(self.predict(x)) if prediction == y[i]])/x.shape[0]
 
     def predict(self, x, suggested_class=None):
         """
@@ -50,7 +69,13 @@ class ClasificadorRuido:
         :param suggested_class: a new feature added to classify the examples
         :return: an array with the predicted class for each example from the dataset
         """
+        return self._predict_binary(x, suggested_class) if len(self.classes) <= 2 else self._predict_multiclass(x)
+
+    def _predict_binary(self, x, suggested_class):
         return np.array([0. if pred[0] > pred[1] else 1. for pred in self.predict_proba(x, suggested_class)])
+
+    def _predict_multiclass(self, x):
+        return np.array([float(np.where(pred == np.amax(pred))[0][0]) for pred in self.predict_proba(x)])
 
     def predict_proba(self, x, suggested_class=None):
         """
@@ -61,6 +86,9 @@ class ClasificadorRuido:
         :param suggested_class: new feature to be added
         :return: probabilities that a data is well classified or not
         """
+        return self._predict_proba_binary(x, suggested_class) if len(self.classes) <= 2 else self._predict_proba_multiclass(x)
+
+    def _predict_proba_binary(self, x, suggested_class):
         predictions = []
 
         if suggested_class is None:
@@ -87,11 +115,22 @@ class ClasificadorRuido:
             if suggested_class == 0:
                 predictions[:, [0, 1]] = predictions[:, [1, 0]]
 
-            # QUITANDO ESTA PARTE DEL CODIGO Y PONIENDO EN predict EL CODIGO SIGUIENTE:
-            # return np.array([1 - suggested_class if pred[0] > pred[1] else suggested_class for pred in self.predict_proba(x, suggested_class)])
-            # SE CONSIGUE RESOLVER EL PROBLEMA PARA DOS CLASES SIN TENER EN CUENTA SUGGESTED CLASS = NONE HAY QUE DARLE VUELTAS A ESTO PARA QUE SEA MULTICLASE
-
         return predictions
+
+    def _predict_proba_multiclass(self, x):
+        predictions = []
+
+        for cl in self.classes:
+            preds = []
+
+            _x = x.copy()
+            _x = np.c_[_x, np.repeat(cl, x.shape[0])]
+
+            [preds.append(clf.predict_proba(_x)) for clf in self.classifiers]
+            preds = np.array(preds).mean(axis=0)
+            predictions.append(preds[:, 1])
+
+        return np.array(predictions).transpose()
 
     def predict_proba_error(self, x, suggested_class=None):
         """
@@ -178,43 +217,6 @@ class ClasificadorRuido:
         updated_class = [(updated_data[i, -1] == data[i, -1]) for i in range(0, num_data)]
 
         return updated_data, np.array(updated_class)
-
-    def fit_multiclass(self, x, y):
-        self.classifiers = []
-        self.classes = np.unique(y)
-
-        for classifier in range(self.n_trees):
-            tree_clf = tree.DecisionTreeClassifier()
-            modified_x, modified_y = self._change_non_binary_class(x, y)
-            tree_clf.fit(modified_x, modified_y)
-            self.classifiers.append(tree_clf)
-
-    def score_multiclass(self, x, y):
-        return sum([1 for i, prediction in enumerate(self.predict_multiclass(x)) if prediction == str(y[i])])/x.shape[0]
-
-    def predict_multiclass(self, x):
-        predictions = []
-        for pred in self.predict_proba_multiclass(x):
-            predictions.append(max(pred.iteritems(), key=operator.itemgetter(1))[0])
-
-        return np.array(predictions)
-
-    def predict_proba_multiclass(self, x):
-        predictions = [{} for _ in range(x.shape[0])]
-
-        for cl in self.classes:
-            self.predictions = []
-
-            _x = x.copy()
-            _x = np.c_[_x, np.repeat(cl, x.shape[0])]
-
-            [self.predictions.append(clf.predict_proba(_x)) for clf in self.classifiers]
-            self.predictions = np.array(self.predictions).mean(axis=0)
-
-            for i,pred in enumerate(self.predictions):
-                predictions[i][str(cl)] = pred[1]
-
-        return predictions
 
     def _change_non_binary_class(self, x, y):
         data = np.c_[x, y]
