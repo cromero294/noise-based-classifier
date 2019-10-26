@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-from lib.plotModel import *
+from resources.plotModel import *
 from sklearn.datasets import make_circles
 
 import matplotlib.pyplot as plt

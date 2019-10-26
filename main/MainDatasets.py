@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-from lib.plotModel import *
-from lib.Datos import *
+from resources.plotModel import *
+from resources.Datos import *
 from sklearn import tree
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier

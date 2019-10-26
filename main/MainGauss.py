@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-from lib.plotModel import *
-from lib.Datos import *
+from resources.plotModel import *
+from resources.Datos import *
 from sklearn.datasets import make_moons
 
 import matplotlib.pyplot as plt

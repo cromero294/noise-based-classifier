@@ -5,7 +5,7 @@ Created on Sun Nov 11 16:13:00 2018
 @author: Mario Calle Romero
 """
 from __future__ import division
-from lib.Datos import Datos
+from resources.Datos import Datos
 from src.ClasificadorRuido import ClasificadorRuido
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
