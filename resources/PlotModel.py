@@ -42,30 +42,20 @@ def plot_model1(x,y,clase,clf,pred_prob=None):
         plt.gca().set_ylim(yy.min(), yy.max())
         axs[i].grid(True)
 
-def plot_model(clf, x, y, y_pred):
-    x_min, x_max = x.min() - .2, x.max() + .2
-    y_min, y_max = y.min() - .2, y.max() + .2
+def plot_model(clf, X, y, title):
+    # Plotting decision regions
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1),
+                         np.arange(y_min, y_max, 0.1))
 
-    hx = (x_max - x_min)/100.
-    hy = (y_max - y_min)/100.
+    # Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = np.array(clf.predict_proba(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
+    Z = Z.reshape(xx.shape)
 
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, hx), np.arange(y_min, y_max, hy))
-
-    z = np.array(clf.predict_proba(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
-
-    z = z.reshape(xx.shape)
-    cm = plt.cm.viridis
-
-    plt.contourf(xx, yy, z, cmap=cm, alpha=.8)
-    plt.contour(xx, yy, z, [0.5], linewidths=[2], colors=['k'])
-
-    plt.gca().set_xlim(xx.min(), xx.max())
-    plt.gca().set_ylim(yy.min(), yy.max())
-    plt.grid(True)
-
-    # if y_pred is not None:
-    #     plt.scatter(x[y_pred==0.], y[y_pred==0.], marker = 'o', c='purple')
-    #     plt.scatter(x[y_pred==1.], y[y_pred==1.], marker = 'o', c='yellow')
+    plt.contourf(xx, yy, Z, cmap=plt.cm.viridis)
+    plt.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor='k', alpha=0.8)
+    plt.title("{} classification".format(title))
 
     plt.show()
 
