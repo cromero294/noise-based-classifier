@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#!/usr/bin/python3
 from __future__ import division
 
 import numpy as np
@@ -208,7 +209,7 @@ class ClasificadorRuido:
 
         updated_data = data.copy()
 
-        random_data = range(0, num_data)
+        random_data = list(range(0, num_data))
         shuffle(random_data)
 
         for num in random_data[:percentage]:
@@ -226,7 +227,7 @@ class ClasificadorRuido:
 
         updated_data = data.copy()
 
-        random_data = range(0, num_data)
+        random_data = list(range(0, num_data))
         shuffle(random_data)
 
         classes = list(set(y))
