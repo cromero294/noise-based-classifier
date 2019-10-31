@@ -15,6 +15,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
+from tqdm import tqdm
+
 
 def get_data():
     if len(sys.argv) > 1:
@@ -37,7 +39,7 @@ def get_data():
 def main():
     X, y = get_data()
 
-    X_tr, X_te, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    X_tr, X_te, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=1)
 
     ###################################
     #####      NORMALIZATION      #####
@@ -57,30 +59,33 @@ def main():
     #########################################
     #####      DATA CLASSIFICATION      #####
     #########################################
-    clf = ClasificadorRuido(n_trees=100, perc=0.5)
-    rfclf = RandomForestClassifier(n_estimators=100)
-
-    clf.fit(X_train, y_train)
-    clf.predict(X_test, suggested_class=None)
+    rfclf = RandomForestClassifier(n_estimators=1000)
 
     rfclf.fit(X_train, y_train)
-    rfclf.predict(X_test)
+    rfscore = 1 - rfclf.score(X_test, y_test)
 
-    print("----------------------------------------------")
-    print("{} Score:{} {}".format(properties.COLOR_BLUE, properties.END_C, clf.score(X_test, y_test, suggested_class=None)))
-    print("{} Random forest score:{} {}".format(properties.COLOR_BLUE, properties.END_C, rfclf.score(X_test, y_test)))
+    plt.axhline(y=rfscore, color='m', linestyle='--')
 
-    plt.subplot(1, 2, 1)
-    plot_model(clf, X_train, y_train, "Noise based")
+    n_trees = 100
 
-    plt.plot()
+    colors = ['c', 'k', 'y', 'b']
 
-    plt.subplot(1, 2, 2)
-    plot_model(rfclf, X_train, y_train, "Random forest")
+    for x_perc, perc in enumerate([0.2, 0.5, 0.7, 0.9]):
+        clf_scores = np.zeros((n_trees, n_trees))
 
-    plt.plot()
+        clf = ClasificadorRuido(n_trees=n_trees, perc=perc)
 
-    plt.tight_layout()
+        for i in tqdm(range(100)):
+
+            clf.fit(X_train, y_train)
+            clf.predict_proba_error(X_test)
+
+            for n_tree in range(1, n_trees+1):
+                clf_scores[i, n_tree-1] += 1 - clf.score_error(X_test, y_test, n_classifiers=n_tree)
+
+        plt.plot(range(1, n_trees+1), clf_scores.mean(axis=0), linestyle='-.', color=colors[x_perc])
+
+    plt.legend(('RF', 'perc=0.25', 'perc=0.5', 'perc=0.75', 'perc=0.9'), loc='upper right')
     plt.show()
 
 

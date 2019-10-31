@@ -37,7 +37,7 @@ def get_data():
 def main():
     X, y = get_data()
 
-    X_tr, X_te, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    X_tr, X_te, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=1)
 
     ###################################
     #####      NORMALIZATION      #####
@@ -57,30 +57,29 @@ def main():
     #########################################
     #####      DATA CLASSIFICATION      #####
     #########################################
-    clf = ClasificadorRuido(n_trees=100, perc=0.5)
     rfclf = RandomForestClassifier(n_estimators=100)
 
-    clf.fit(X_train, y_train)
-    clf.predict(X_test, suggested_class=None)
-
     rfclf.fit(X_train, y_train)
-    rfclf.predict(X_test)
+    rfscore = rfclf.score(X_test, y_test)
 
-    print("----------------------------------------------")
-    print("{} Score:{} {}".format(properties.COLOR_BLUE, properties.END_C, clf.score(X_test, y_test, suggested_class=None)))
-    print("{} Random forest score:{} {}".format(properties.COLOR_BLUE, properties.END_C, rfclf.score(X_test, y_test)))
+    plt.axhline(y=rfscore, color='m', linestyle='--')
 
-    plt.subplot(1, 2, 1)
-    plot_model(clf, X_train, y_train, "Noise based")
+    clf_scores = []
 
-    plt.plot()
+    for perc in np.arange(0.1, 1., 0.1):
+        scr = 0
+        for i in range(10):
+            clf = ClasificadorRuido(n_trees=100, perc=perc)
 
-    plt.subplot(1, 2, 2)
-    plot_model(rfclf, X_train, y_train, "Random forest")
+            clf.fit(X_train, y_train)
+            scr = clf.score(X_test, y_test, suggested_class=None)
 
-    plt.plot()
+        clf_scores.append(np.mean(scr))
 
-    plt.tight_layout()
+    print(clf_scores)
+
+    plt.plot(np.arange(0.1, 1., 0.1), clf_scores, linestyle='-.', color='olive')
+
     plt.show()
 
 

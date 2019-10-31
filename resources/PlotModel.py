@@ -49,15 +49,13 @@ def plot_model(clf, X, y, title):
     xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1),
                          np.arange(y_min, y_max, 0.1))
 
-    # Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
-    Z = np.array(clf.predict_proba(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
+    Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+    # Z = np.array(clf.predict_proba(np.c_[xx.ravel(), yy.ravel()]))[:, 1]
     Z = Z.reshape(xx.shape)
 
-    plt.contourf(xx, yy, Z, cmap=plt.cm.viridis)
+    plt.contourf(xx, yy, Z)
     plt.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor='k', alpha=0.8)
     plt.title("{} classification".format(title))
-
-    plt.show()
 
 def plotModel_arboles(x,y,clase,clf,axs,ind,pred_prob=None):
     x_min, x_max = x.min() - .2, x.max() + .2
