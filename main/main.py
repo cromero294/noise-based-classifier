@@ -14,6 +14,7 @@ from src.ClasificadorRuido import *
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from eli5.sklearn import PermutationImportance
 
 
 def get_data():
@@ -54,11 +55,16 @@ def main():
     X_train = pca.fit_transform(X_tr_std)
     X_test = pca.transform(X_te_std)
 
+    # X_train = X_tr
+    # X_test = X_te
+
     #########################################
     #####      DATA CLASSIFICATION      #####
     #########################################
-    clf = ClasificadorRuido(n_trees=100, perc=0.5)
-    rfclf = RandomForestClassifier(n_estimators=100)
+    n_trees = 100
+
+    clf = ClasificadorRuido(n_trees=n_trees, perc=0.5)
+    rfclf = RandomForestClassifier(n_estimators=n_trees)
 
     clf.fit(X_train, y_train)
     clf.predict(X_test, suggested_class=None)

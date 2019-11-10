@@ -5,7 +5,8 @@ from __future__ import division
 import numpy as np
 from random import *
 from sklearn import tree
-import operator
+from eli5.sklearn import PermutationImportance
+import graphviz
 
 class ClasificadorRuido:
 
@@ -28,20 +29,48 @@ class ClasificadorRuido:
     def _fit_binary(self, x, y):
         self.classifiers = []
 
+        auxi = 1
+        perms = np.zeros((1, x.shape[1]+1))
+
         for classifier in range(self.n_trees):
             tree_clf = tree.DecisionTreeClassifier()
             modified_x, modified_y = self._change_class(x, y)
             tree_clf.fit(modified_x, modified_y)
+            ### Permutation Importance ###
+            perm = PermutationImportance(tree_clf).fit(modified_x, modified_y)
+            print("Tree ", auxi, ": ", perm.feature_importances_)
+            perms += perm.feature_importances_
+            auxi+=1
+            ####################################
             self.classifiers.append(tree_clf)
+
+        ### Graph ###
+        dot_data = tree.export_graphviz(tree_clf, out_file=None)
+        graph = graphviz.Source(dot_data)
+        graph.render("iris")
+
+        print("Tree features mean: ", perms/self.n_trees)
 
     def _fit_multiclass(self, x, y):
         self.classifiers = []
+
+        auxi = 1
+        perms = np.zeros((1, x.shape[1]+1))
 
         for classifier in range(self.n_trees):
             tree_clf = tree.DecisionTreeClassifier()
             modified_x, modified_y = self._change_non_binary_class(x, y)
             tree_clf.fit(modified_x, modified_y)
+            ### Permutation Importance ###
+            perm = PermutationImportance(tree_clf).fit(modified_x, modified_y)
+            print("Tree ", auxi, ": ", perm.feature_importances_)
+            tree.plot_tree(tree_clf.fit(modified_x, modified_y))
+            perms += perm.feature_importances_
+            auxi+=1
+            ###############################
             self.classifiers.append(tree_clf)
+
+        print("Tree features mean: ", perms / self.n_trees)
 
     def score(self, x, y, suggested_class=None):
         """
