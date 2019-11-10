@@ -45,11 +45,10 @@ class ClasificadorRuido:
             self.classifiers.append(tree_clf)
 
         ### Graph ###
-        dot_data = tree.export_graphviz(tree_clf, out_file=None)
-        graph = graphviz.Source(dot_data)
-        graph.render("iris")
+        tree.export_graphviz(tree_clf, out_file="../prueba.dat")
 
-        print("Tree features mean: ", perms/self.n_trees)
+        print("----------------------------------------------")
+        print(" Noise based full importances", np.ravel(perms/self.n_trees))
 
     def _fit_multiclass(self, x, y):
         self.classifiers = []
@@ -70,7 +69,11 @@ class ClasificadorRuido:
             ###############################
             self.classifiers.append(tree_clf)
 
-        print("Tree features mean: ", perms / self.n_trees)
+        ### Graph ###
+        tree.export_graphviz(tree_clf, out_file="../prueba.dat")
+
+        print("----------------------------------------------")
+        print(" Noise based full importances", np.ravel(perms / self.n_trees))
 
     def score(self, x, y, suggested_class=None):
         """
