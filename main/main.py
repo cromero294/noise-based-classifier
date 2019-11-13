@@ -60,6 +60,9 @@ def main():
     # X_train = X_tr
     # X_test = X_te
 
+    # X_train = X_train[:,4:]
+    # X_test = X_test[:,4:]
+
     #########################################
     #####      DATA CLASSIFICATION      #####
     #########################################
@@ -70,7 +73,7 @@ def main():
     boostingclf = GradientBoostingClassifier(n_estimators=n_trees)
     baggingclf = BaggingClassifier(n_estimators=n_trees)
 
-    clf.fit(X_train, y_train)
+    clf.fit(X_train, y_train, random_perc=True)
     clf.predict(X_test, suggested_class=None)
 
     rfclf.fit(X_train, y_train)

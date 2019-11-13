@@ -14,7 +14,7 @@ class ClasificadorRuido:
         self.n_trees = n_trees
         self.perc = perc
 
-    def fit(self, x, y):
+    def fit(self, x, y, random_perc=True):
         """
         This method is used to fit each one of the decision trees the random noise classifier is composed with.
         This is the way to fit the complete classifier and it is compulsory to carry on with the data classification.
@@ -24,9 +24,9 @@ class ClasificadorRuido:
         """
         self.classes = np.unique(y)
 
-        self._fit_binary(x, y) if len(self.classes) <= 2 else self._fit_multiclass(x, y)
+        self._fit_binary(x, y, random_perc) if len(self.classes) <= 2 else self._fit_multiclass(x, y, random_perc)
 
-    def _fit_binary(self, x, y):
+    def _fit_binary(self, x, y, random_perc=True):
         self.classifiers = []
 
         auxi = 1
@@ -34,11 +34,11 @@ class ClasificadorRuido:
 
         for classifier in range(self.n_trees):
             tree_clf = tree.DecisionTreeClassifier()
-            modified_x, modified_y = self._change_class(x, y)
+            modified_x, modified_y = self._change_class(x, y, random_perc)
             tree_clf.fit(modified_x, modified_y)
             ### Permutation Importance ###
             perm = PermutationImportance(tree_clf).fit(modified_x, modified_y)
-            print("Tree ", auxi, ": ", perm.feature_importances_)
+            # print("Tree ", auxi, ": ", perm.feature_importances_)
             perms += perm.feature_importances_
             auxi+=1
             ####################################
@@ -47,10 +47,10 @@ class ClasificadorRuido:
         ### Graph ###
         tree.export_graphviz(tree_clf, out_file="../prueba.dat")
 
-        print("----------------------------------------------")
-        print(" Noise based full importances", np.ravel(perms/self.n_trees))
+        # print("----------------------------------------------")
+        # print(" Noise based full importances", np.ravel(perms/self.n_trees))
 
-    def _fit_multiclass(self, x, y):
+    def _fit_multiclass(self, x, y, random_perc=True):
         self.classifiers = []
 
         auxi = 1
@@ -58,22 +58,22 @@ class ClasificadorRuido:
 
         for classifier in range(self.n_trees):
             tree_clf = tree.DecisionTreeClassifier()
-            modified_x, modified_y = self._change_non_binary_class(x, y)
+            modified_x, modified_y = self._change_non_binary_class(x, y, random_perc)
             tree_clf.fit(modified_x, modified_y)
             ### Permutation Importance ###
-            perm = PermutationImportance(tree_clf).fit(modified_x, modified_y)
-            print("Tree ", auxi, ": ", perm.feature_importances_)
-            tree.plot_tree(tree_clf.fit(modified_x, modified_y))
-            perms += perm.feature_importances_
-            auxi+=1
+            # perm = PermutationImportance(tree_clf).fit(modified_x, modified_y)
+            # print("Tree ", auxi, ": ", perm.feature_importances_)
+            # tree.plot_tree(tree_clf.fit(modified_x, modified_y))
+            # perms += perm.feature_importances_
+            # auxi+=1
             ###############################
             self.classifiers.append(tree_clf)
 
         ### Graph ###
         tree.export_graphviz(tree_clf, out_file="../prueba.dat")
 
-        print("----------------------------------------------")
-        print(" Noise based full importances", np.ravel(perms / self.n_trees))
+        # print("----------------------------------------------")
+        # print(" Noise based full importances", np.ravel(perms / self.n_trees))
 
     def score(self, x, y, suggested_class=None):
         """
@@ -220,7 +220,7 @@ class ClasificadorRuido:
 
         return sum([1 for i, pred in enumerate(self.predictions[n_classifiers, :, :]) if (pred[0] > pred[1] and y[i] == 0) or (pred[1] >= pred[0] and y[i] == 1)]) / x.shape[0]
 
-    def _change_class(self, x, y):
+    def _change_class(self, x, y, random_perc=True):
         """
         Given a data set split in features and classes this method transforms this set into another set.
         This new set is created based on random noise generation and its classification. The randomization
@@ -237,7 +237,11 @@ class ClasificadorRuido:
         data = np.c_[x, y]
 
         num_data = data.shape[0]
-        percentage = int(num_data * self.perc)
+
+        if random_perc:
+            percentage = int(num_data * np.round(uniform(0.1, 0.9), 2))
+        else:
+            percentage = int(num_data * self.perc)
 
         updated_data = data.copy()
 
@@ -251,11 +255,15 @@ class ClasificadorRuido:
 
         return updated_data, np.array(updated_class)
 
-    def _change_non_binary_class(self, x, y):
+    def _change_non_binary_class(self, x, y, random_perc=True):
         data = np.c_[x, y]
 
         num_data = data.shape[0]
-        percentage = int(num_data * self.perc)
+
+        if random_perc:
+            percentage = int(num_data * np.round(uniform(0.1, 0.9), 2))
+        else:
+            percentage = int(num_data * self.perc)
 
         updated_data = data.copy()
 
