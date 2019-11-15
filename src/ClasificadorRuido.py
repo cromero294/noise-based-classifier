@@ -8,6 +8,7 @@ from sklearn import tree
 from eli5.sklearn import PermutationImportance
 import graphviz
 
+
 class ClasificadorRuido:
 
     def __init__(self, n_trees=100, perc=0.5):

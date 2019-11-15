@@ -1,60 +1,77 @@
-import sys
-
 # sys.path.append('/home/cromero/noise-based-classifier/')
 
-import resources.properties as properties
 import datasets.DatasetGenerator as data
 from resources.PlotModel import *
 
-from sklearn.model_selection import train_test_split
-from sklearn.datasets import make_moons
-
-import pandas as pd
-
 from src.ClasificadorRuido import *
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
 
 from tqdm import tqdm
 
 
 def main():
 
-    X_test, y_test = data.create_dataset(5000, "twonorm")
+    model = "ringnorm"
 
-    print(X_test)
+    a, b, y_test = data.create_dataset(5000, model)
 
-    return
+    X_test = np.array(np.c_[a, b])
+    y_test = np.array(y_test)[:, 0]
+
 
     #########################################
     #####      DATA CLASSIFICATION      #####
     #########################################
-    rfclf = RandomForestClassifier(n_estimators=100)
-
-    rfclf.fit(X_train, y_train)
-    rfscore = 1 - rfclf.score(X_test, y_test)
-
-    plt.axhline(y=rfscore, color='m', linestyle='--')
 
     n_trees = 100
+    times = 100
 
-    scores = []
+    scores_clf = []
 
     for perc in tqdm(np.arange(0.1, 0.9, 0.01)):
+
+        ### Classifier generation ###
+
         clf = ClasificadorRuido(n_trees=n_trees, perc=perc)
 
-        score_aux = 0
+        score_clf = 0
 
-        for _ in range(100):
+        for _ in range(times):
+            ### Training data generation ###
+
+            a, b, y_train = data.create_dataset(300, model)
+
+            X_train = np.array(np.c_[a, b])
+            y_train = np.array(y_train)[:, 0]
+
+            ### Classifiers training and classification ###
+
             clf.fit(X_train, y_train, random_perc=False)
-            score_aux += (1 - clf.score(X_test, y_test))
 
-        scores.append(score_aux / 100)
+            score_clf += (1 - clf.score(X_test, y_test))
 
-    plt.plot(np.arange(0.1, 0.9, 0.01), scores, linestyle='-.')
+        scores_clf.append(score_clf / times)
 
-    plt.savefig("../plots/plot_errors_wdbc.png")
+    ### Random Forest ###
+
+    rfclf = RandomForestClassifier(n_estimators=n_trees)
+
+    rfscore = 0
+
+    for _ in range(times):
+        a, b, y_train = data.create_dataset(300, model)
+
+        X_train = np.array(np.c_[a, b])
+        y_train = np.array(y_train)[:, 0]
+
+        rfclf.fit(X_train, y_train)
+        rfscore += 1 - rfclf.score(X_test, y_test)
+
+    plt.axhline(y=rfscore/times, color='m', linestyle='-')
+
+    plt.plot(np.arange(0.1, 0.9, 0.01), scores_clf, linestyle='-.')
+
+    plt.savefig("../plots/noise-variation_ringnorm.png")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.matlib
 
 def create_dataset(n, model, ymargin=0.0, noise=None, output_boundary=False):
     x = np.random.rand(n, 1) * 2.0 * np.pi
@@ -9,7 +10,7 @@ def create_dataset(n, model, ymargin=0.0, noise=None, output_boundary=False):
         c = y > np.sin(x)
         ybnd = np.sin(xbnd)
     elif model == 'linear':
-        y = np.random.rand(n, 1) * 2.0 * np.pi
+        y = np.random.rand(n, 1) * 2.0 * np.pi3
         c = y > x
         ybnd = xbnd
     elif model == 'square':
