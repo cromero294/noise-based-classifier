@@ -71,7 +71,7 @@ def main():
 
     plt.plot(np.arange(0.1, 0.9, 0.01), scores_clf, linestyle='-.')
 
-    plt.savefig("../plots/noise-variation_ringnorm.png")
+    plt.savefig("../plots/noise-variation_"+model+".png")
 
 
 if __name__ == "__main__":

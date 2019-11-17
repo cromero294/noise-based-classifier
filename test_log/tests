@@ -1,0 +1,19 @@
+noise-error:
+    Con distintos conjuntos de datos sintéticos (ringnorm, sine, threenorm) se ha probado la función del parámetro "perc"
+    que indica el ruido con el que se generan los conjuntos de datos para el entrenamiento del algoritmo. En este caso concreto
+    la prueba que se realiza mide el porcentaje de error con respecto al número de árboles utilizados. En las gráficas
+    "noise-error_<model>_<n_trees>trees" se observan varias funciones. Cada una de estas funciones representa un porcentaje
+    de modificación distinto.
+
+    Resultados: como resultado se percibe que con 0.1 y 0.9 el porcentaje de error tarda más en converger pero se obtienen
+    resultados similares al utilizar cierto número de árboles.
+
+noise-variation:
+    Con los conjuntos de datos sintéticos (ringnorm, sine, threenorm) se vuelve a probar la función del parámetro "perc"
+    en el algoritmo de clasificación. Concretamente, se prueba el porcentaje de error con respecto al porcentaje de modificación
+    de los conjuntos de datos. Los resultados gráficos se pueden ver en "noise-variation_<model>".
+
+    Resultados: no se observa ninguna tendencia clara en los resultados. Se puede deber a la escala utilizada pero hay
+    demasiado ruido en las gráficas. Sin embargo, en la gráfica generada para el conjunto de datos "sine" sí se intuye
+    una función parabólica. Con porcentaje de cambio más bajo, el porcentaje de error también es menor. Aumenta el por-
+    centaje de error hasta su máximo con 0.5 y vuelve a disminuir. La función es más o menos simétrica.

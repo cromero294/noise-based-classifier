@@ -34,19 +34,20 @@ class ClasificadorRuido:
         perms = np.zeros((1, x.shape[1]+1))
 
         for classifier in range(self.n_trees):
+
             tree_clf = tree.DecisionTreeClassifier()
             modified_x, modified_y = self._change_class(x, y, random_perc)
             tree_clf.fit(modified_x, modified_y)
             ### Permutation Importance ###
-            perm = PermutationImportance(tree_clf).fit(modified_x, modified_y)
+            # perm = PermutationImportance(tree_clf).fit(modified_x, modified_y)
             # print("Tree ", auxi, ": ", perm.feature_importances_)
-            perms += perm.feature_importances_
-            auxi+=1
+            # perms += perm.feature_importances_
+            # auxi+=1
             ####################################
             self.classifiers.append(tree_clf)
 
         ### Graph ###
-        tree.export_graphviz(tree_clf, out_file="../prueba.dat")
+        # tree.export_graphviz(tree_clf, out_file="../prueba.dat")
 
         # print("----------------------------------------------")
         # print(" Noise based full importances", np.ravel(perms/self.n_trees))
