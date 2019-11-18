@@ -15,7 +15,7 @@ class ClasificadorRuido:
         self.n_trees = n_trees
         self.perc = perc
 
-    def fit(self, x, y, random_perc=True):
+    def fit(self, x, y, random_perc=False):
         """
         This method is used to fit each one of the decision trees the random noise classifier is composed with.
         This is the way to fit the complete classifier and it is compulsory to carry on with the data classification.
@@ -27,7 +27,7 @@ class ClasificadorRuido:
 
         self._fit_binary(x, y, random_perc) if len(self.classes) <= 2 else self._fit_multiclass(x, y, random_perc)
 
-    def _fit_binary(self, x, y, random_perc=True):
+    def _fit_binary(self, x, y, random_perc=False):
         self.classifiers = []
 
         auxi = 1
@@ -52,7 +52,7 @@ class ClasificadorRuido:
         # print("----------------------------------------------")
         # print(" Noise based full importances", np.ravel(perms/self.n_trees))
 
-    def _fit_multiclass(self, x, y, random_perc=True):
+    def _fit_multiclass(self, x, y, random_perc=False):
         self.classifiers = []
 
         auxi = 1
