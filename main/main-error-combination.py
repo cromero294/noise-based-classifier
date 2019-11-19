@@ -15,7 +15,7 @@ def main():
 
     model = "sine"
 
-    a, b, y_test = data.create_dataset(100, model)
+    a, b, y_test = data.create_dataset(5000, model)
 
     X_test = np.array(np.c_[a, b])
     y_test = np.array(y_test)[:, 0]
@@ -26,10 +26,12 @@ def main():
     #########################################
 
     n_trees = 100
+    times = 100
 
-    clf_scores = np.empty((1000, len(np.arange(0.01, 0.99, 0.01)), n_trees))
+    rf_scores = []
+    clf_scores = np.empty((times, len(np.arange(0.01, 0.99, 0.01)), n_trees))
 
-    for i in tqdm(range(1000)):
+    for i in tqdm(range(times)):
         ### Training data generation ###
 
         a, b, y_train = data.create_dataset(300, model)
@@ -38,6 +40,15 @@ def main():
         y_train = np.array(y_train)[:, 0]
 
         ### Classifiers training and classification ###
+
+        # RANDOM FOREST
+
+        rfclf = RandomForestClassifier(n_estimators=n_trees)
+
+        rfclf.fit(X_train, y_train)
+        rf_scores.append(1 - rfclf.score(X_test, y_test))
+
+        # NOISE BASED
 
         for perci, perc in enumerate(np.arange(0.01, 0.99, 0.01)):
             clf = ClasificadorRuido(n_trees=n_trees, perc=perc)
@@ -52,13 +63,16 @@ def main():
 
             clf_scores[i, perci] = np.array(scores)
 
+    print(np.array(rf_scores))
+    print()
     print(clf_scores)
     print(clf_scores.shape)
     print()
-    print(clf_scores.mean(axis=1))
-    print(clf_scores.mean(axis=1).shape)
+    print(clf_scores.mean(axis=0))
+    print(clf_scores.mean(axis=0).shape)
 
-    np.save("../data/"+ model +"_data", clf_scores)
+    np.save("../data/" + model + "_data_random-forest", np.array(rf_scores))
+    np.save("../data/" + model + "_data", clf_scores)
 
 
 if __name__ == "__main__":
