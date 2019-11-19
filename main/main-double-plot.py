@@ -1,4 +1,6 @@
-# sys.path.append('/home/cromero/noise-based-classifier/')
+import sys
+
+sys.path.append('/home/cromero/noise-based-classifier/')
 
 import datasets.DatasetGenerator as data
 from resources.PlotModel import *
@@ -10,7 +12,7 @@ from tqdm import tqdm
 
 
 def main():
-    model = "sine"
+    model = "threenorm"
 
     data = np.load("../data/" + model + "_data.npy")
 
@@ -23,11 +25,11 @@ def main():
 
     fig, axs = plt.subplots(1, 2, figsize=(9, 3), sharey=False)
 
-    axs[0].plot(np.arange(0.05, 0.975, 0.025), data.mean(axis=0)[:, -1], linestyle='-.')
-    for i in range(1, 37, 5):
+    axs[0].plot(np.arange(0.01, 0.99, 0.01), data.mean(axis=0)[:, -1], linestyle='-.')
+    for i in range(1, 98, 10):
         axs[1].plot(range(1, 101, 1), data.mean(axis=0)[i, :], linestyle='-.')
 
-    plt.ylim(0.02, 0.06)
+    plt.ylim()
 
     plt.show()
 

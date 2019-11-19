@@ -1,4 +1,6 @@
-# sys.path.append('/home/cromero/noise-based-classifier/')
+import sys
+
+sys.path.append('/home/cromero/noise-based-classifier/')
 
 import datasets.DatasetGenerator as data
 from resources.PlotModel import *
@@ -11,7 +13,7 @@ from tqdm import tqdm
 
 def main():
 
-    model = "ringnorm"
+    model = "sine"
 
     a, b, y_test = data.create_dataset(100, model)
 
@@ -25,7 +27,7 @@ def main():
 
     n_trees = 100
 
-    clf_scores = np.empty((100, len(np.arange(0.01, 0.99, 0.01)), n_trees))
+    clf_scores = np.empty((1000, len(np.arange(0.01, 0.99, 0.01)), n_trees))
 
     for i in tqdm(range(1000)):
         ### Training data generation ###
