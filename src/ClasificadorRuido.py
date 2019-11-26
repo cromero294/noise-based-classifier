@@ -195,7 +195,9 @@ class ClasificadorRuido:
 
             self.predictions.append(preds[:, :, 1].transpose())
 
-        return np.array(self.predictions).transpose()
+        self.predictions = np.array(self.predictions).transpose()
+
+        return self.predictions
 
     def _predict_proba_error_binary(self, x, suggested_class=None):
         if suggested_class is None:
@@ -238,7 +240,6 @@ class ClasificadorRuido:
         :param n_classifiers: number of classifiers used to calculate the score
         :return: score obtained
         """
-
         return self._score_error_binary(x, y, n_classifiers) if len(self.classes) <= 2 else self._score_error_multiclass(x, y, n_classifiers)
 
     def _score_error_multiclass(self, x, y, n_classifiers=100):
@@ -246,6 +247,10 @@ class ClasificadorRuido:
             n_classifiers = len(self.classifiers)
 
         n_classifiers -= 1
+
+        # print(self.predictions)
+        #
+        # print([pred for i, pred in enumerate(self.predictions[n_classifiers, :, :])])
 
         return sum([1 for i, pred in enumerate(self.predictions[n_classifiers, :, :]) if float(np.where(pred == np.amax(pred))[0][0] == y[i])]) / x.shape[0]
 
