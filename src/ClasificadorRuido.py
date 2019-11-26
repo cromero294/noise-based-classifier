@@ -175,6 +175,29 @@ class ClasificadorRuido:
         :param suggested_class: the class the classifier uses as new feature
         :return: the final probabilities matrix
         """
+        return self._predict_proba_error_binary(x, suggested_class) if len(self.classes) <= 2 else self._predict_proba_error_multiclass(x)
+
+    def _predict_proba_error_multiclass(self, x):
+        self.predictions = []
+
+        for cl in self.classes:
+            preds = []
+
+            _x = x.copy()
+            _x = np.c_[_x, np.repeat(cl, x.shape[0])]
+
+            [preds.append(clf.predict_proba(_x)) for clf in self.classifiers]
+            preds = np.array(preds)
+
+            for i in range(len(self.classifiers)-1, -1, -1):
+                preds[i, :, :] = preds[:i+1, :, :].sum(axis=0)
+                preds[i, :, :] /= i+1
+
+            self.predictions.append(preds[:, :, 1].transpose())
+
+        return np.array(self.predictions).transpose()
+
+    def _predict_proba_error_binary(self, x, suggested_class=None):
         if suggested_class is None:
             probs1 = self.predict_proba_error(x, suggested_class=1)
             probs0 = self.predict_proba_error(x, suggested_class=0)
@@ -215,6 +238,18 @@ class ClasificadorRuido:
         :param n_classifiers: number of classifiers used to calculate the score
         :return: score obtained
         """
+
+        return self._score_error_binary(x, y, n_classifiers) if len(self.classes) <= 2 else self._score_error_multiclass(x, y, n_classifiers)
+
+    def _score_error_multiclass(self, x, y, n_classifiers=100):
+        if n_classifiers is None:
+            n_classifiers = len(self.classifiers)
+
+        n_classifiers -= 1
+
+        return sum([1 for i, pred in enumerate(self.predictions[n_classifiers, :, :]) if float(np.where(pred == np.amax(pred))[0][0] == y[i])]) / x.shape[0]
+
+    def _score_error_binary(self, x, y, n_classifiers=100):
         if n_classifiers is None:
             n_classifiers = len(self.classifiers)
 

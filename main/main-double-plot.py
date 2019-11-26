@@ -17,6 +17,9 @@ def main():
     data = np.load("../data/" + model + "_data.npy")
     rfscore = np.load("../data/" + model + "_data_random-forest.npy")
 
+    # data = np.load("../data/" + model + "_data_1000.npy")
+    # rfscore = np.load("../data/" + model + "_data_1000_random-forest.npy")
+
     # print(data.mean(axis=0)[:, -1][::10])
 
     # print(data)
@@ -34,14 +37,19 @@ def main():
     for i in range(1, 98, 10):
         axs[1].plot(range(1, 101, 1), data.mean(axis=0)[i, :], linestyle='-.')
 
-    axs[1].legend(list(map(lambda x: str(x/100), range(1, 98, 10))), loc='upper right')
+    axs[1].axhline(y=rfscore.mean(), color='m', linestyle='-')
+
+    legend = list(map(lambda x: str(x/100), range(1, 98, 10)))
+    legend.append('RF')
+
+    axs[1].legend(legend, loc='upper right')
 
     fig.suptitle(model + ' plotting')
 
     axs[0].grid()
     axs[1].grid()
 
-    plt.ylim(0.06, 0.1)
+    plt.ylim()
 
     plt.show()
 
