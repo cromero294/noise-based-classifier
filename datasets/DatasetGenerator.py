@@ -117,7 +117,7 @@ def create_full_dataset(n, dimm, model, noise=None):
         c[:n2, :] = 0
 
     elif model == "ringnorm":
-        a = 2 / np.sqrt(dimm)
+        a = 1 / np.sqrt(dimm)
 
         n2 = int(n / 2)
 

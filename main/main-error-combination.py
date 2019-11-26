@@ -13,12 +13,12 @@ from tqdm import tqdm
 
 def main():
 
-    model = "sine"
+    model = "ringnorm"
 
-    a, b, y_test = data.create_dataset(5000, model)
+    X_test, y_test = data.create_full_dataset(5000, 20, model)
 
-    X_test = np.array(np.c_[a, b])
-    y_test = np.array(y_test)[:, 0]
+    # X_test = np.array(np.c_[a, b])
+    y_test = y_test.transpose()[0]
 
 
     #########################################
@@ -34,10 +34,10 @@ def main():
     for i in tqdm(range(times)):
         ### Training data generation ###
 
-        a, b, y_train = data.create_dataset(300, model)
+        X_train, y_train = data.create_full_dataset(300, 20, model)
 
-        X_train = np.array(np.c_[a, b])
-        y_train = np.array(y_train)[:, 0]
+        # X_train = np.array(np.c_[a, b])
+        y_train = y_train.transpose()[0]
 
         ### Classifiers training and classification ###
 

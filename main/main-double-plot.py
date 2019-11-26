@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 
 def main():
-    model = "sine"
+    model = "ringnorm"
 
     data = np.load("../data/" + model + "_data.npy")
     rfscore = np.load("../data/" + model + "_data_random-forest.npy")
