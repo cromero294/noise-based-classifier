@@ -72,7 +72,7 @@ class ClasificadorRuido:
             self.classifiers.append(tree_clf)
 
         ### Graph ###
-        tree.export_graphviz(tree_clf, out_file="../prueba.dat")
+        # tree.export_graphviz(tree_clf, out_file="../prueba.dat")
 
         # print("----------------------------------------------")
         # print(" Noise based full importances", np.ravel(perms / self.n_trees))
@@ -248,10 +248,6 @@ class ClasificadorRuido:
 
         n_classifiers -= 1
 
-        # print(self.predictions)
-        #
-        # print([pred for i, pred in enumerate(self.predictions[n_classifiers, :, :])])
-
         return sum([1 for i, pred in enumerate(self.predictions[n_classifiers, :, :]) if float(np.where(pred == np.amax(pred))[0][0] == y[i])]) / x.shape[0]
 
     def _score_error_binary(self, x, y, n_classifiers=100):
@@ -316,7 +312,7 @@ class ClasificadorRuido:
 
         for num in random_data[:percentage]:
             prev_class = updated_data[num, -1]
-            classes_without_prev_class = classes[:]  # copy classes list
+            classes_without_prev_class = classes.copy()  # copy classes list
             classes_without_prev_class.remove(prev_class)
             updated_data[num, -1] = choice(classes_without_prev_class)
 

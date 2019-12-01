@@ -121,10 +121,6 @@ def create_full_dataset(n, dimm, model, noise=None):
 
         n2 = int(n / 2)
 
-        # for i in range(dimm):
-        #     x[:n2, i] = np.random.normal(0, 4.0, (n2, 1)).transpose()
-        #     x[n2:, i] = np.random.normal(a, 1.0, (n2, 1)).transpose()
-
         x[:n2, :] = np.random.normal(0, 4.0, (n2, dimm))
         x[n2:, :] = np.random.normal(a, 1.0, (n2, dimm))
 

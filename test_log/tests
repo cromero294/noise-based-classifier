@@ -17,3 +17,10 @@ noise-variation:
     demasiado ruido en las gráficas. Sin embargo, en la gráfica generada para el conjunto de datos "sine" sí se intuye
     una función parabólica. Con porcentaje de cambio más bajo, el porcentaje de error también es menor. Aumenta el por-
     centaje de error hasta su máximo con 0.5 y vuelve a disminuir. La función es más o menos simétrica.
+
+noise-error-combination:
+    Utilizando generadores de datasets de 20 dimensiones se realiza la combinación de ambas pruebas anteriores. Con esta
+    prueba se consigue ver la evolución de la tasa de error con respecto al número de clasificadores utilizado y con res-
+    pecto al porcentaje de aleatorización de la clases. Además, en este experimento se guardan los datos y posteriormente
+    se pueden recuperar. Se ha probado con la generación de 5000 ejemplos de test y 300 de entrenamiento que varian por
+    cada una de las 100 ejecuciones que se realizan. De estas 100 ejecuciones se realiza la media de la tasa de error.
