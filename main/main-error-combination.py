@@ -25,8 +25,8 @@ def main():
     #####      DATA CLASSIFICATION      #####
     #########################################
 
-    n_trees = 100
-    times = 100
+    n_trees = 10
+    times = 10
 
     rf_scores = []
     clf_scores = np.empty((times, len(np.arange(0.01, 0.99, 0.01)), n_trees))
@@ -71,8 +71,8 @@ def main():
     print(clf_scores.mean(axis=0))
     print(clf_scores.mean(axis=0).shape)
 
-    np.save("../data/" + model + "_data_random-forest", np.array(rf_scores))
-    np.save("../data/" + model + "_data", clf_scores)
+    # np.save("../data/" + model + "_data_random-forest", np.array(rf_scores))
+    # np.save("../data/" + model + "_data", clf_scores)
 
 
 if __name__ == "__main__":

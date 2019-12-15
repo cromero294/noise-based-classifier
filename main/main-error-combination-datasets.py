@@ -2,10 +2,7 @@ import sys
 
 sys.path.append('/home/cromero/noise-based-classifier/')
 
-import datasets.DatasetGenerator as data
-from resources.PlotModel import *
 from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import train_test_split
 import resources.properties as properties
 import pandas as pd
 
