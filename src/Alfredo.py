@@ -7,12 +7,12 @@ from random import *
 from sklearn import tree
 
 
-class ClasificadorRuidoBagging:
+class Alfredo:
 
-    def __init__(self, n_trees=100, perc=0.5, sub_train=0.33):
+    def __init__(self, n_trees=100, perc=0.5, bagg=True):
         self.n_trees = n_trees
         self.perc = perc
-        self.sub_train = sub_train
+        self.bagg = bagg
 
     def fit(self, x, y, random_perc=False):
         """
@@ -24,35 +24,22 @@ class ClasificadorRuidoBagging:
         """
         self.classes = np.unique(y)
 
-        self._fit_binary(x, y, random_perc) if len(self.classes) <= 2 else self._fit_multiclass(x, y, random_perc)
-
-    def _fit_binary(self, x, y, random_perc=False):
         self.classifiers = []
 
         for classifier in range(self.n_trees):
             tree_clf = tree.DecisionTreeClassifier()
 
-            num_data = int(x.shape[0] * self.sub_train/2)
+            _x = x
+            _y = y
 
-            random_1 = list(range(0, num_data))
-            shuffle(random_1)
+            if self.bagg:
+                ind = np.random.randint(0, x.shape[0], x.shape[0])
 
-            random_2 = list(range(0, num_data))
-            shuffle(random_2)
-
-            _x = x[random_1 + random_2, :]
-            _y = y[random_1 + random_2]
+                _x = x[ind, :]
+                _y = y[ind]
 
             modified_x, modified_y = self._change_class(_x, _y, random_perc)
-            tree_clf.fit(modified_x, modified_y)
-            self.classifiers.append(tree_clf)
 
-    def _fit_multiclass(self, x, y, random_perc=False):
-        self.classifiers = []
-
-        for classifier in range(self.n_trees):
-            tree_clf = tree.DecisionTreeClassifier()
-            modified_x, modified_y = self._change_non_binary_class(x, y, random_perc)
             tree_clf.fit(modified_x, modified_y)
             self.classifiers.append(tree_clf)
 
@@ -237,7 +224,7 @@ class ClasificadorRuidoBagging:
 
         return sum([1 for i, pred in enumerate(self.predictions[n_classifiers, :, :]) if (pred[0] > pred[1] and y[i] == 0) or (pred[1] >= pred[0] and y[i] == 1)]) / x.shape[0]
 
-    def _change_class(self, x, y, random_perc=True):
+    def _change_class(self, x, y, random_perc=False):
         """
         Given a data set split in features and classes this method transforms this set into another set.
         This new set is created based on random noise generation and its classification. The randomization
@@ -265,28 +252,20 @@ class ClasificadorRuidoBagging:
         random_data = list(range(0, num_data))
         shuffle(random_data)
 
-        for num in random_data[:percentage]:
-            updated_data[num, -1] = 1 - updated_data[num, -1]
+        if len(self.classes) <= 2:
+            self._binary(percentage, random_data, updated_data)
+        else:
+            self._multiclass(percentage, random_data, updated_data, y)
 
         updated_class = [(updated_data[i, -1] == data[i, -1]) for i in range(0, num_data)]
 
         return updated_data, np.array(updated_class)
 
-    def _change_non_binary_class(self, x, y, random_perc=True):
-        data = np.c_[x, y]
+    def _binary(self, percentage, random_data, updated_data):
+        for num in random_data[:percentage]:
+            updated_data[num, -1] = 1 - updated_data[num, -1]
 
-        num_data = data.shape[0]
-
-        if random_perc:
-            percentage = int(num_data * np.round(uniform(0.1, 0.9), 2))
-        else:
-            percentage = int(num_data * self.perc)
-
-        updated_data = data.copy()
-
-        random_data = list(range(0, num_data))
-        shuffle(random_data)
-
+    def _multiclass(self, percentage, random_data, updated_data, y):
         classes = list(set(y))
 
         for num in random_data[:percentage]:
@@ -294,7 +273,3 @@ class ClasificadorRuidoBagging:
             classes_without_prev_class = classes.copy()  # copy classes list
             classes_without_prev_class.remove(prev_class)
             updated_data[num, -1] = choice(classes_without_prev_class)
-
-        updated_class = [(updated_data[i, -1] == data[i, -1]) for i in range(0, num_data)]
-
-        return updated_data, np.array(updated_class)

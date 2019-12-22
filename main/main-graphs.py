@@ -10,10 +10,10 @@ from src.ClasificadorRuido import *
 
 
 def main():
-    model = "threenorm"
+    model = "ringnorm"
 
-    data = np.load("../data/" + model + "_data.npy")
-    rfscore = np.load("../data/" + model + "_data_random-forest.npy")
+    data = np.load("../data/" + model + "_data_ALFREDO.npy")
+    rfscore = np.load("../data/" + model + "_data_random-forest_ALFREDO.npy")
 
     print(data.shape)
 
@@ -68,8 +68,8 @@ def main():
     plt.grid()
 
     plt.tight_layout()
-    # plt.show()
-    plt.savefig("../plots/several-trees_err-random/err-random-"+model+"-several_n_trees.png")
+    plt.show()
+    # plt.savefig("../plots/several-trees_err-random/err-random-"+model+"-several_n_trees.png")
 
 
 if __name__ == "__main__":

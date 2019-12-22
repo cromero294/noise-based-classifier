@@ -5,7 +5,7 @@ sys.path.append('/home/cromero/noise-based-classifier/')
 import datasets.DatasetGenerator as data
 from resources.PlotModel import *
 
-from src.ClasificadorRuido import *
+from src.Alfredo import *
 from sklearn.ensemble import RandomForestClassifier
 
 from tqdm import tqdm
@@ -25,7 +25,7 @@ def main():
     #####      DATA CLASSIFICATION      #####
     #########################################
 
-    n_trees = 10
+    n_trees = 100
     times = 10
 
     rf_scores = []
@@ -51,7 +51,7 @@ def main():
         # NOISE BASED
 
         for perci, perc in enumerate(np.arange(0.01, 0.99, 0.01)):
-            clf = ClasificadorRuido(n_trees=n_trees, perc=perc)
+            clf = Alfredo(n_trees=n_trees, perc=perc, bagg=True)
 
             clf.fit(X_train, y_train, random_perc=False)
             clf.predict_proba_error(X_test)
@@ -71,8 +71,8 @@ def main():
     print(clf_scores.mean(axis=0))
     print(clf_scores.mean(axis=0).shape)
 
-    # np.save("../data/" + model + "_data_random-forest", np.array(rf_scores))
-    # np.save("../data/" + model + "_data", clf_scores)
+    np.save("../data/" + model + "_data_random-forest_ALFREDO", np.array(rf_scores))
+    np.save("../data/" + model + "_data_ALFREDO", clf_scores)
 
 
 if __name__ == "__main__":
