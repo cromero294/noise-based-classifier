@@ -4,24 +4,33 @@ sys.path.append('/home/cromero/noise-based-classifier/')
 
 import resources.properties as properties
 from resources.PlotModel import *
-import datasets.DatasetGenerator as data
 
 from src.ClasificadorRuido import *
 
 
 def main():
-    model = "threenorm"
+    model = "wdbc.csv"
 
-    data = np.load("../data/" + model + "_data_ALFREDO.npy")
-    rfscore = np.load("../data/" + model + "_data_random-forest_ALFREDO.npy")
+    DIR = properties.SYNTHETIC
+
+    if model.find(".") > -1:
+        DIR = properties.DATASETS
+
+    data = np.load(properties.DATA + DIR + model + "_data_ALFREDO.npy")
+    rfscore = np.load(properties.DATA + DIR + model + "_data_random-forest_ALFREDO.npy")
 
     print(data.shape)
 
     model_title = str.upper(model[0]) + model[1:]
     plt.figure(figsize=(20, 10))
 
-    plt.subplot(1, 2, 1)
+    """
+    ----------------------------------------
+                   FIRST PLOT
+    ----------------------------------------
+    """
 
+    plt.subplot(1, 2, 1)
 
     plt.title(model_title + " perc. random")
 
@@ -44,7 +53,11 @@ def main():
 
     plt.grid()
 
-    ########################################################################################
+    """
+    ----------------------------------------
+                   SECOND PLOT
+    ----------------------------------------
+    """
 
     plt.subplot(1, 2, 2)
 
@@ -70,9 +83,10 @@ def main():
     plt.grid()
 
     plt.tight_layout()
+
     # plt.show()
-    plt.savefig("../plots/ALFREDO/PNG/2-plots_" + model + ".png")
-    plt.savefig("../plots/ALFREDO/EPS/2-plots_" + model + ".eps")
+    plt.savefig(properties.PLOTS + "ALFREDO/PNG/2-plots_" + model + ".png")
+    plt.savefig(properties.PLOTS + "ALFREDO/EPS/2-plots_" + model + ".eps")
 
 
 if __name__ == "__main__":

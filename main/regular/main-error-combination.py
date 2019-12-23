@@ -3,7 +3,7 @@ import sys
 sys.path.append('/home/cromero/noise-based-classifier/')
 
 import datasets.DatasetGenerator as data
-from resources.PlotModel import *
+import resources.properties as properties
 
 from src.Alfredo import *
 from sklearn.ensemble import RandomForestClassifier
@@ -13,11 +13,10 @@ from tqdm import tqdm
 
 def main():
 
-    model = "ringnorm"
+    model = "threenorm"
 
     X_test, y_test = data.create_full_dataset(5000, 20, model)
 
-    # X_test = np.array(np.c_[a, b])
     y_test = y_test.transpose()[0]
 
 
@@ -26,7 +25,7 @@ def main():
     #########################################
 
     n_trees = 100
-    times = 10
+    times = 100
 
     rf_scores = []
     clf_scores = np.empty((times, len(np.arange(0.01, 0.99, 0.01)), n_trees))
@@ -36,7 +35,6 @@ def main():
 
         X_train, y_train = data.create_full_dataset(300, 20, model)
 
-        # X_train = np.array(np.c_[a, b])
         y_train = y_train.transpose()[0]
 
         ### Classifiers training and classification ###
@@ -71,8 +69,8 @@ def main():
     print(clf_scores.mean(axis=0))
     print(clf_scores.mean(axis=0).shape)
 
-    np.save("../data/" + model + "_data_random-forest_ALFREDO", np.array(rf_scores))
-    np.save("../data/" + model + "_data_ALFREDO", clf_scores)
+    np.save(properties.DATA + properties.SYNTHETIC + model + "_data_random-forest_ALFREDO", np.array(rf_scores))
+    np.save(properties.DATA + properties.SYNTHETIC + model + "_data_ALFREDO", clf_scores)
 
 
 if __name__ == "__main__":

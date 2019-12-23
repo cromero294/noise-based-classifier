@@ -67,8 +67,8 @@ def main():
 
             clf_scores[i, perci] = np.array(scores)
 
-    np.save("../data/" + sys.argv[1] + "_data_random-forest", np.array(rf_scores))
-    np.save("../data/" + sys.argv[1] + "_data", clf_scores)
+    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_random-forest", np.array(rf_scores))
+    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data", clf_scores)
 
 
 if __name__ == "__main__":
