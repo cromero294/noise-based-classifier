@@ -10,7 +10,7 @@ from src.ClasificadorRuido import *
 
 
 def main():
-    model = "ringnorm"
+    model = "threenorm"
 
     data = np.load("../data/" + model + "_data_ALFREDO.npy")
     rfscore = np.load("../data/" + model + "_data_random-forest_ALFREDO.npy")
@@ -18,8 +18,10 @@ def main():
     print(data.shape)
 
     model_title = str.upper(model[0]) + model[1:]
+    plt.figure(figsize=(20, 10))
 
     plt.subplot(1, 2, 1)
+
 
     plt.title(model_title + " perc. random")
 
@@ -33,7 +35,7 @@ def main():
     legend = list(map(lambda x: str(x+1), [0, 4, 9, 49, 99]))
     legend.append('RF')
 
-    plt.legend(legend, loc='upper right')
+    plt.legend(legend, loc='upper right', ncol=2)
 
     plt.ylabel("Err")
     plt.xlabel("Data randomization")
@@ -60,7 +62,7 @@ def main():
     legend = list(map(lambda x: str(x / 100), [1, 5, 10, 50, 99]))
     legend.append('RF')
 
-    plt.legend(legend, loc='upper right')
+    plt.legend(legend, loc='upper right', ncol=2)
 
     plt.ylabel("Err")
     plt.xlabel("N. trees")
@@ -68,8 +70,9 @@ def main():
     plt.grid()
 
     plt.tight_layout()
-    plt.show()
-    # plt.savefig("../plots/several-trees_err-random/err-random-"+model+"-several_n_trees.png")
+    # plt.show()
+    plt.savefig("../plots/ALFREDO/PNG/2-plots_" + model + ".png")
+    plt.savefig("../plots/ALFREDO/EPS/2-plots_" + model + ".eps")
 
 
 if __name__ == "__main__":
