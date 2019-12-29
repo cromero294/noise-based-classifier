@@ -16,8 +16,11 @@ def main():
     if model.find(".") > -1:
         DIR = properties.DATASETS
 
-    data = np.load(properties.DATA + DIR + model + "_data_ALFREDO.npy")
-    rfscore = np.load(properties.DATA + DIR + model + "_data_random-forest_ALFREDO.npy")
+    data = np.load(properties.DATA + DIR + model + "_data.npy")
+    rfscore = np.load(properties.DATA + DIR + model + "_data_random-forest.npy")
+    treescore = np.load(properties.DATA + DIR + model + "_data_tree.npy")
+    boostingscore = np.load(properties.DATA + DIR + model + "_data_boosting.npy")
+    baggingscore = np.load(properties.DATA + DIR + model + "_data_bagging.npy")
 
     print(data.shape)
 

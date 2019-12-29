@@ -20,7 +20,15 @@ def get_data():
     if len(sys.argv) > 1:
         try:
             dataset = pd.read_csv(properties.DATASET_DIRECTORY + sys.argv[1])
+            print(dataset.dtypes)
             cat_columns = dataset.select_dtypes(['object']).columns
+
+            # AUXILIAR
+
+            cat_columns = ['class']
+
+            # AUXILIAR
+
             dataset[cat_columns] = dataset[cat_columns].astype('category')
             dataset[cat_columns] = dataset[cat_columns].apply(lambda x: x.cat.codes)
             dataset = dataset.values
@@ -38,7 +46,7 @@ def get_data():
 def main():
     X, y = get_data()
 
-    sss = StratifiedShuffleSplit(n_splits=100, test_size=0.33, random_state=0)
+    sss = StratifiedShuffleSplit(n_splits=100, test_size=0.33)
 
     n_estimators = 1000
 

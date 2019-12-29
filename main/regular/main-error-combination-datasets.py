@@ -3,11 +3,17 @@ import sys
 sys.path.append('/home/cromero/noise-based-classifier/')
 
 from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedShuffleSplit
 import resources.properties as properties
 import pandas as pd
 
-from src.ClasificadorRuido import *
+from sklearn.ensemble import BaggingClassifier
+from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+
+from src.ClasificadorRuido import *
+from src.Alfredo import *
 
 from tqdm import tqdm
 
@@ -16,6 +22,13 @@ def main():
     try:
         dataset = pd.read_csv(properties.DATASET_DIRECTORY + sys.argv[1])
         cat_columns = dataset.select_dtypes(['object']).columns
+
+        # AUXILIAR
+
+        cat_columns = ['Outcome']
+
+        # AUXILIAR
+
         dataset[cat_columns] = dataset[cat_columns].astype('category')
         dataset[cat_columns] = dataset[cat_columns].apply(lambda x: x.cat.codes)
         dataset = dataset.values
@@ -28,12 +41,16 @@ def main():
     #####      DATA CLASSIFICATION      #####
     #########################################
 
-    n_trees = 1000
-    k_folds = 10
+    n_trees = 100
+    k_folds = 100
 
-    skf = StratifiedKFold(n_splits=k_folds)
+    skf = StratifiedShuffleSplit(n_splits=k_folds, test_size=0.33)
 
     rf_scores = []
+    tree_scores = []
+    bagg_scores = []
+    boost_scores = []
+
     clf_scores = np.empty((k_folds, len(np.arange(0.01, 0.99, 0.01)), n_trees))
 
     for i, (train_index, test_index) in tqdm(enumerate(skf.split(X, y))):
@@ -48,14 +65,26 @@ def main():
         # RANDOM FOREST
 
         rfclf = RandomForestClassifier(n_estimators=n_trees)
+        tree_clf = tree.DecisionTreeClassifier()
+        boosting = AdaBoostClassifier(n_estimators=n_trees)
+        bagging = BaggingClassifier(n_estimators=n_trees)
 
         rfclf.fit(X_train, y_train)
         rf_scores.append(1 - rfclf.score(X_test, y_test))
 
+        tree_clf.fit(X_train, y_train)
+        tree_scores.append(1 - rfclf.score(X_test, y_test))
+
+        boosting.fit(X_train, y_train)
+        boost_scores.append(1 - rfclf.score(X_test, y_test))
+
+        bagging.fit(X_train, y_train)
+        bagg_scores.append(1 - rfclf.score(X_test, y_test))
+
         # NOISE BASED
 
         for perci, perc in enumerate(np.arange(0.01, 0.99, 0.01)):
-            clf = ClasificadorRuido(n_trees=n_trees, perc=perc)
+            clf = Alfredo(n_trees=n_trees, perc=perc, bagg=True)
 
             clf.fit(X_train, y_train, random_perc=False)
             clf.predict_proba_error(X_test)
@@ -67,7 +96,11 @@ def main():
 
             clf_scores[i, perci] = np.array(scores)
 
+
     np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_random-forest", np.array(rf_scores))
+    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_tree", np.array(tree_scores))
+    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_boosting", np.array(boost_scores))
+    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_bagging", np.array(bagg_scores))
     np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data", clf_scores)
 
 
