@@ -25,7 +25,13 @@ def main():
 
         # AUXILIAR
 
-        cat_columns = ['Outcome']
+        # print(dataset)
+
+        # aux = dataset['class']
+        # dataset.drop(labels=['class'], axis=1, inplace = True)
+        # dataset.insert(5, 'class', aux)
+
+        cat_columns = ['class']
 
         # AUXILIAR
 

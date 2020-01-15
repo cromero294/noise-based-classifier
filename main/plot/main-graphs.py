@@ -9,7 +9,7 @@ from src.ClasificadorRuido import *
 
 
 def main():
-    model = "wdbc.csv"
+    model = "segment.dat"
 
     DIR = properties.SYNTHETIC
 
@@ -87,9 +87,9 @@ def main():
 
     plt.tight_layout()
 
-    # plt.show()
-    plt.savefig(properties.PLOTS + "ALFREDO/PNG/2-plots_" + model + ".png")
-    plt.savefig(properties.PLOTS + "ALFREDO/EPS/2-plots_" + model + ".eps")
+    plt.show()
+    # plt.savefig(properties.PLOTS + "ALFREDO/PNG/2-plots_" + model + ".png")
+    # plt.savefig(properties.PLOTS + "ALFREDO/EPS/2-plots_" + model + ".eps")
 
 
 if __name__ == "__main__":
