@@ -25,6 +25,14 @@ def get_data():
 
             # AUXILIAR
 
+            # print(dataset)
+
+            aux = dataset['class']
+            dataset.drop(labels=['class'], axis=1, inplace = True)
+            dataset.insert(13, 'class', aux)
+
+            print(dataset)
+
             cat_columns = ['class']
 
             # AUXILIAR

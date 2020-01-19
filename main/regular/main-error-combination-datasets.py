@@ -25,13 +25,13 @@ def main():
 
         # AUXILIAR
 
-        # print(dataset)
 
         # aux = dataset['class']
         # dataset.drop(labels=['class'], axis=1, inplace = True)
         # dataset.insert(5, 'class', aux)
-
-        cat_columns = ['class']
+        #
+        # cat_columns = ['Outcome']
+        # print(dataset)
 
         # AUXILIAR
 
@@ -79,13 +79,13 @@ def main():
         rf_scores.append(1 - rfclf.score(X_test, y_test))
 
         tree_clf.fit(X_train, y_train)
-        tree_scores.append(1 - rfclf.score(X_test, y_test))
+        tree_scores.append(1 - tree_clf.score(X_test, y_test))
 
         boosting.fit(X_train, y_train)
-        boost_scores.append(1 - rfclf.score(X_test, y_test))
+        boost_scores.append(1 - boosting.score(X_test, y_test))
 
         bagging.fit(X_train, y_train)
-        bagg_scores.append(1 - rfclf.score(X_test, y_test))
+        bagg_scores.append(1 - bagging.score(X_test, y_test))
 
         # NOISE BASED
 

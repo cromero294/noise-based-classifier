@@ -9,7 +9,7 @@ from src.ClasificadorRuido import *
 
 
 def main():
-    model = "segment.dat"
+    model = "new-thyroid.data"
 
     DIR = properties.SYNTHETIC
 
@@ -42,7 +42,7 @@ def main():
     for i in lst:
         plt.plot(np.arange(0.01, 0.99, 0.01), data.mean(axis=0)[:, i], linestyle='-')
 
-    plt.axhline(y=rfscore.mean(), color='m', linestyle='-')
+    plt.axhline(y=boostingscore.mean(), color='m', linestyle='-')
 
     legend = list(map(lambda x: str(x+1), [0, 4, 9, 49, 99]))
     legend.append('RF')

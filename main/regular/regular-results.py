@@ -16,7 +16,7 @@ from src.ClasificadorRuido import *
 from src.Alfredo import *
 
 def main():
-    model = "heart.dat"
+    model = "wine.data"
 
     data_alfredo = np.load(properties.DATA + properties.SCORES + model + "_ALFREDO-SCORES.npy")
     data_bagging = np.load(properties.DATA + properties.SCORES + model + "_BAGGING-SCORES.npy")
