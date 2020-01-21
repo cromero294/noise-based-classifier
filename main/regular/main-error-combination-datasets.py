@@ -5,6 +5,7 @@ sys.path.append('/home/cromero/noise-based-classifier/')
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import StratifiedShuffleSplit
 import resources.properties as properties
+import datasets.DatasetGenerator as data
 import pandas as pd
 
 from sklearn.ensemble import BaggingClassifier
@@ -17,31 +18,42 @@ from src.Alfredo import *
 
 from tqdm import tqdm
 
+def get_data():
+        try:
+            dataset = pd.read_csv(properties.DATASET_DIRECTORY + sys.argv[1])
+            cat_columns = dataset.select_dtypes(['object']).columns
+
+            # AUXILIAR
+
+
+            # aux = dataset['class']
+            # dataset.drop(labels=['class'], axis=1, inplace = True)
+            # dataset.insert(5, 'class', aux)
+            #
+            # cat_columns = ['Outcome']
+            # print(dataset)
+
+            # AUXILIAR
+
+            dataset[cat_columns] = dataset[cat_columns].astype('category')
+            dataset[cat_columns] = dataset[cat_columns].apply(lambda x: x.cat.codes)
+            dataset = dataset.values
+            X, y = dataset[:, :-1], dataset[:, -1]
+
+            return X, y
+        except IOError:
+            print("File \"{}\" does not exist.".format(sys.argv[1]))
+            return
 
 def main():
-    try:
-        dataset = pd.read_csv(properties.DATASET_DIRECTORY + sys.argv[1])
-        cat_columns = dataset.select_dtypes(['object']).columns
 
-        # AUXILIAR
+    # X, y = get_data()
 
+    model = 'threenorm'
 
-        # aux = dataset['class']
-        # dataset.drop(labels=['class'], axis=1, inplace = True)
-        # dataset.insert(5, 'class', aux)
-        #
-        # cat_columns = ['Outcome']
-        # print(dataset)
+    X, y = data.create_full_dataset(5300, 20, model)
 
-        # AUXILIAR
-
-        dataset[cat_columns] = dataset[cat_columns].astype('category')
-        dataset[cat_columns] = dataset[cat_columns].apply(lambda x: x.cat.codes)
-        dataset = dataset.values
-        X, y = dataset[:, :-1], dataset[:, -1]
-    except IOError:
-        print("File \"{}\" does not exist.".format(sys.argv[1]))
-        return
+    y = y.ravel()
 
     #########################################
     #####      DATA CLASSIFICATION      #####
@@ -50,7 +62,7 @@ def main():
     n_trees = 100
     k_folds = 100
 
-    skf = StratifiedShuffleSplit(n_splits=k_folds, test_size=0.33)
+    skf = StratifiedShuffleSplit(n_splits=k_folds, test_size=0.8)
 
     rf_scores = []
     tree_scores = []
@@ -103,11 +115,11 @@ def main():
             clf_scores[i, perci] = np.array(scores)
 
 
-    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_random-forest", np.array(rf_scores))
-    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_tree", np.array(tree_scores))
-    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_boosting", np.array(boost_scores))
-    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data_bagging", np.array(bagg_scores))
-    np.save(properties.DATA + properties.DATASETS + sys.argv[1] + "_data", clf_scores)
+    np.save(properties.DATA + properties.DATASETS + model + "_data_random-forest", np.array(rf_scores))
+    np.save(properties.DATA + properties.DATASETS + model + "_data_tree", np.array(tree_scores))
+    np.save(properties.DATA + properties.DATASETS + model + "_data_boosting", np.array(boost_scores))
+    np.save(properties.DATA + properties.DATASETS + model + "_data_bagging", np.array(bagg_scores))
+    np.save(properties.DATA + properties.DATASETS + model + "_data", clf_scores)
 
 
 if __name__ == "__main__":

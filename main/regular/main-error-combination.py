@@ -15,7 +15,7 @@ def main():
 
     model = "threenorm"
 
-    X_test, y_test = data.create_full_dataset(5000, 20, model)
+    X_test, y_test = data.create_full_dataset(5300, 20, model)
 
     y_test = y_test.transpose()[0]
 

@@ -116,6 +116,15 @@ def create_full_dataset(n, dimm, model, noise=None):
         c = np.ones((n, 1))
         c[:n2, :] = 0
 
+    elif model == 'twonorm':
+        a = 2 / np.sqrt(dimm)
+        n2 = int(n / 2)
+        x[:n2, :] = np.random.normal(a, 1.0, (n2, dimm))
+        x[n2:, :] = np.random.normal(-a, 1.0, (n2, dimm))
+
+        c = np.ones((n, 1))
+        c[:n2, :] = 0
+
     elif model == "ringnorm":
         a = 1 / np.sqrt(dimm)
 
