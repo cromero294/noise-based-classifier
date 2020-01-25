@@ -11,6 +11,7 @@ from sklearn.ensemble import BaggingClassifier
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
+import datasets.DatasetGenerator as data
 
 from src.ClasificadorRuido import *
 from src.Alfredo import *
@@ -27,13 +28,13 @@ def get_data():
 
             # print(dataset)
 
-            aux = dataset['class']
-            dataset.drop(labels=['class'], axis=1, inplace = True)
-            dataset.insert(13, 'class', aux)
-
-            print(dataset)
-
-            cat_columns = ['class']
+            # aux = dataset['class']
+            # dataset.drop(labels=['class'], axis=1, inplace = True)
+            # dataset.insert(13, 'class', aux)
+            #
+            # print(dataset)
+            #
+            # cat_columns = ['class']
 
             # AUXILIAR
 
@@ -52,9 +53,15 @@ def get_data():
 
 
 def main():
-    X, y = get_data()
+    # X, y = get_data()
 
-    sss = StratifiedShuffleSplit(n_splits=100, test_size=0.33)
+    model = 'ringnorm'
+
+    X, y = data.create_full_dataset(5300, 20, model)
+
+    y = y.ravel()
+
+    sss = StratifiedShuffleSplit(n_splits=100, test_size=0.2)
 
     n_estimators = 1000
 
@@ -96,12 +103,12 @@ def main():
 
         i += 1
 
-    np.save(properties.DATA + properties.SCORES + sys.argv[1] + "_TREE-SCORES", np.array(tree_scores))
-    np.save(properties.DATA + properties.SCORES + sys.argv[1] + "_ALFREDO-SCORES", np.array(alfredo_scores))
-    np.save(properties.DATA + properties.SCORES + sys.argv[1] + "_NOISE-SCORES", np.array(noise_scores))
-    np.save(properties.DATA + properties.SCORES + sys.argv[1] + "_BOOSTING-SCORES", np.array(boosting_scores))
-    np.save(properties.DATA + properties.SCORES + sys.argv[1] + "_BAGGING-SCORES", np.array(bagging_scores))
-    np.save(properties.DATA + properties.SCORES + sys.argv[1] + "_RF-SCORES", np.array(rf_scores))
+    np.save(properties.DATA + properties.SCORES + model + "_TREE-SCORES", np.array(tree_scores))
+    np.save(properties.DATA + properties.SCORES + model + "_ALFREDO-SCORES", np.array(alfredo_scores))
+    np.save(properties.DATA + properties.SCORES + model + "_NOISE-SCORES", np.array(noise_scores))
+    np.save(properties.DATA + properties.SCORES + model + "_BOOSTING-SCORES", np.array(boosting_scores))
+    np.save(properties.DATA + properties.SCORES + model + "_BAGGING-SCORES", np.array(bagging_scores))
+    np.save(properties.DATA + properties.SCORES + model + "_RF-SCORES", np.array(rf_scores))
 
 
 if __name__ == "__main__":

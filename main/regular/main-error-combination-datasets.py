@@ -49,7 +49,7 @@ def main():
 
     # X, y = get_data()
 
-    model = 'threenorm'
+    model = 'twonorm'
 
     X, y = data.create_full_dataset(5300, 20, model)
 
