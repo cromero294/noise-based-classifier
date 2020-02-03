@@ -130,8 +130,23 @@ def create_full_dataset(n, dimm, model, noise=None):
 
         n2 = int(n / 2)
 
+        # tiene que dar 1% de error approx.
+        # multivariate_normal
         x[:n2, :] = np.random.normal(0, 4.0, (n2, dimm))
         x[n2:, :] = np.random.normal(a, 1.0, (n2, dimm))
+
+        c = np.ones((n, 1))
+        c[:n2, :] = 0
+
+    elif model == "ringnorm_normal":
+        a = 1 / np.sqrt(dimm)
+
+        n2 = int(n / 2)
+
+        # tiene que dar 1% de error approx.
+        # multivariate_normal
+        x[:n2, :] = np.random.multivariate_normal(0, 4.0, (n2, dimm))
+        x[n2:, :] = np.random.multivariate_normal(a, 1.0, (n2, dimm))
 
         c = np.ones((n, 1))
         c[:n2, :] = 0

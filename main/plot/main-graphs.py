@@ -9,7 +9,7 @@ from src.ClasificadorRuido import *
 
 
 def main():
-    model = "new-thyroid.data"
+    model = "australian.dat"
 
     DIR = properties.SYNTHETIC
 

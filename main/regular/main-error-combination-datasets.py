@@ -18,10 +18,10 @@ from src.Alfredo import *
 
 from tqdm import tqdm
 
-def get_data():
+def get_data(model):
         try:
-            dataset = pd.read_csv(properties.DATASET_DIRECTORY + sys.argv[1])
-            cat_columns = dataset.select_dtypes(['object']).columns
+            dataset = pd.read_csv(properties.DATASET_DIRECTORY + "csv/" + model + ".csv")
+            # cat_columns = dataset.select_dtypes(['object']).columns
 
             # AUXILIAR
 
@@ -30,7 +30,7 @@ def get_data():
             # dataset.drop(labels=['class'], axis=1, inplace = True)
             # dataset.insert(5, 'class', aux)
             #
-            # cat_columns = ['Outcome']
+            cat_columns = ['class']
             # print(dataset)
 
             # AUXILIAR
@@ -47,13 +47,15 @@ def get_data():
 
 def main():
 
-    # X, y = get_data()
+    model = sys.argv[1]
 
-    model = 'twonorm'
+    X, y = get_data(model)
 
-    X, y = data.create_full_dataset(5300, 20, model)
-
-    y = y.ravel()
+    # model = 'twonorm'
+    #
+    # X, y = data.create_full_dataset(5300, 20, model)
+    #
+    # y = y.ravel()
 
     #########################################
     #####      DATA CLASSIFICATION      #####
@@ -62,7 +64,10 @@ def main():
     n_trees = 100
     k_folds = 100
 
-    skf = StratifiedShuffleSplit(n_splits=k_folds, test_size=0.8)
+    # skf = StratifiedShuffleSplit(n_splits=k_folds, test_size=0.8)
+
+    train = np.load(properties.DATA + properties.STRATIFIED + model + "_train.npy")
+    test = np.load(properties.DATA + properties.STRATIFIED + model + "_test.npy")
 
     rf_scores = []
     tree_scores = []
@@ -71,12 +76,16 @@ def main():
 
     clf_scores = np.empty((k_folds, len(np.arange(0.01, 0.99, 0.01)), n_trees))
 
-    for i, (train_index, test_index) in tqdm(enumerate(skf.split(X, y))):
+    for i in tqdm(range(k_folds)):
+        train_index = train[i, :]
+        test_index = train[i, :]
 
         ### Training data generation ###
 
         X_train, y_train = X[train_index], y[train_index]
         X_test, y_test = X[test_index], y[test_index]
+
+        # print(X_train, y_train)
 
         ### Classifiers training and classification ###
 
@@ -84,7 +93,7 @@ def main():
 
         rfclf = RandomForestClassifier(n_estimators=n_trees)
         tree_clf = tree.DecisionTreeClassifier()
-        boosting = AdaBoostClassifier(n_estimators=n_trees)
+        boosting = AdaBoostClassifier(base_estimator=tree.DecisionTreeClassifier(max_depth=10), n_estimators=n_trees)
         bagging = BaggingClassifier(n_estimators=n_trees)
 
         rfclf.fit(X_train, y_train)
