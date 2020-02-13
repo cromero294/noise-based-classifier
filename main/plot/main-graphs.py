@@ -9,9 +9,10 @@ from src.ClasificadorRuido import *
 
 
 def main():
-    model = "australian.dat"
+    model = sys.argv[1]
 
-    DIR = properties.SYNTHETIC
+    # DIR = properties.SYNTHETIC
+    DIR = properties.DATASETS
 
     if model.find(".") > -1:
         DIR = properties.DATASETS
@@ -21,6 +22,24 @@ def main():
     treescore = np.load(properties.DATA + DIR + model + "_data_tree.npy")
     boostingscore = np.load(properties.DATA + DIR + model + "_data_boosting.npy")
     baggingscore = np.load(properties.DATA + DIR + model + "_data_bagging.npy")
+
+    """
+    ----------------------------------------
+                   COMPARISON
+    ----------------------------------------
+    """
+
+    print(data)
+
+    print("MODELO: " + model)
+    print()
+    print("\t" + properties.COLOR_BLUE + "ALFREDO: " + properties.END_C + str(data.mean(axis=0)[49, 99]))
+    print("\t" + properties.COLOR_BLUE + "RANDOM F.: " + properties.END_C + str(rfscore.mean()))
+    print("\t" + properties.COLOR_BLUE + "BOOSTING: " + properties.END_C + str(boostingscore.mean()))
+    print("\t" + properties.COLOR_BLUE + "BAGGING: " + properties.END_C + str(baggingscore.mean()))
+    print("\t" + properties.COLOR_BLUE + "TREE: " + properties.END_C + str(treescore.mean()))
+
+    # -------------------------------------- #
 
     print(data.shape)
 

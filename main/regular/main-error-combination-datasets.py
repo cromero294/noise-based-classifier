@@ -21,7 +21,7 @@ from tqdm import tqdm
 def get_data(model):
         try:
             dataset = pd.read_csv(properties.DATASET_DIRECTORY + "csv/" + model + ".csv")
-            # cat_columns = dataset.select_dtypes(['object']).columns
+            # print(dataset.dtypes)
 
             # AUXILIAR
 
@@ -29,8 +29,12 @@ def get_data(model):
             # aux = dataset['class']
             # dataset.drop(labels=['class'], axis=1, inplace = True)
             # dataset.insert(5, 'class', aux)
-            #
+
             cat_columns = ['class']
+
+            if model == "tic-tac-toe":
+                cat_columns = dataset.select_dtypes(['object']).columns
+
             # print(dataset)
 
             # AUXILIAR
@@ -76,9 +80,11 @@ def main():
 
     clf_scores = np.empty((k_folds, len(np.arange(0.01, 0.99, 0.01)), n_trees))
 
+    print(model)
+
     for i in tqdm(range(k_folds)):
         train_index = train[i, :]
-        test_index = train[i, :]
+        test_index = test[i, :]
 
         ### Training data generation ###
 
@@ -93,7 +99,7 @@ def main():
 
         rfclf = RandomForestClassifier(n_estimators=n_trees)
         tree_clf = tree.DecisionTreeClassifier()
-        boosting = AdaBoostClassifier(base_estimator=tree.DecisionTreeClassifier(max_depth=10), n_estimators=n_trees)
+        boosting = AdaBoostClassifier(base_estimator=tree.DecisionTreeClassifier(max_depth=5), n_estimators=n_trees)
         bagging = BaggingClassifier(n_estimators=n_trees)
 
         rfclf.fit(X_train, y_train)
