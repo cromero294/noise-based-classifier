@@ -54,7 +54,7 @@ def plot_model(clf, X, y, title):
     Z = Z.reshape(xx.shape)
 
     plt.contourf(xx, yy, Z)
-    plt.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor='k', alpha=0.8)
+    # plt.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor='k', alpha=0.8)
     plt.title("{} classification".format(title))
 
 def plotModel_arboles(x,y,clase,clf,axs,ind,pred_prob=None):

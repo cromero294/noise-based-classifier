@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # declare an array
-arr=( "segment" "magic04" )
+arr=( "twonorm" "threenorm" "ringnorm" "waveform" )
  
 # for loop that iterates over each element in arr
 for i in "${arr[@]}"

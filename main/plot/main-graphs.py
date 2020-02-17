@@ -28,12 +28,14 @@ def main():
                    COMPARISON
     ----------------------------------------
     """
-
-    print(data)
+    res = data.mean(axis=0)[:, 99]
+    print(res)
+    print(np.amin(res))
+    print(np.where(res == np.amin(res))[0])
 
     print("MODELO: " + model)
     print()
-    print("\t" + properties.COLOR_BLUE + "ALFREDO: " + properties.END_C + str(data.mean(axis=0)[49, 99]))
+    print("\t" + properties.COLOR_BLUE + "ALFREDO: " + properties.END_C + str(data.mean(axis=0)[74, 99]))
     print("\t" + properties.COLOR_BLUE + "RANDOM F.: " + properties.END_C + str(rfscore.mean()))
     print("\t" + properties.COLOR_BLUE + "BOOSTING: " + properties.END_C + str(boostingscore.mean()))
     print("\t" + properties.COLOR_BLUE + "BAGGING: " + properties.END_C + str(baggingscore.mean()))
@@ -59,7 +61,7 @@ def main():
     lst = [0, 4, 9, 49, 99]
 
     for i in lst:
-        plt.plot(np.arange(0.01, 0.99, 0.01), data.mean(axis=0)[:, i], linestyle='-')
+        plt.plot(np.arange(0.02, 0.99, 0.01), data.mean(axis=0)[1:, i], linestyle='-')
 
     plt.axhline(y=boostingscore.mean(), color='m', linestyle='-')
 
@@ -85,7 +87,7 @@ def main():
 
     plt.title(model_title + " n. trees - err.")
 
-    lst = [0, 4, 9, 48, 97]
+    lst = [1, 4, 9, 48, 97]
 
     print(data.mean(axis=0).shape)
 
@@ -94,7 +96,7 @@ def main():
 
     plt.axhline(y=rfscore.mean(), color='m', linestyle='-')
 
-    legend = list(map(lambda x: str(x / 100), [1, 5, 10, 50, 99]))
+    legend = list(map(lambda x: str(x / 100), [2, 5, 10, 50, 99]))
     legend.append('RF')
 
     plt.legend(legend, loc='upper right', ncol=2)
