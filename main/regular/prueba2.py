@@ -85,31 +85,43 @@ def main():
     #####      DATA CLASSIFICATION      #####
     #########################################
 
-    clf = Alfredo(n_trees=1, perc=0.5, bagg=True)
-    clf10 = Alfredo(n_trees=10, perc=0.5, bagg=True)
-    clf100 = Alfredo(n_trees=1000, perc=0.5, bagg=True)
+    clf = Alfredo(n_trees=1, perc=0.75, bagg=True)
+    clf10 = Alfredo(n_trees=10, perc=0.75, bagg=True)
+    clf100 = Alfredo(n_trees=100, perc=0.75, bagg=True)
+    clf1000 = Alfredo(n_trees=1000, perc=0.75, bagg=True)
 
     clf.fit(X_train, y_train)
     clf10.fit(X_train, y_train)
     clf100.fit(X_train, y_train)
+    clf1000.fit(X_train, y_train)
 
-    plt.subplot(1, 3, 1)
-    plot_model(clf, X_train, y_train, "Noise based - 1")
+    plt.figure(figsize=(12, 3))
 
-    plt.plot()
-
-    plt.subplot(1, 3, 2)
-    plot_model(clf10, X_train, y_train, "Noise based - 10")
+    plt.subplot(1, 4, 1)
+    plot_model(clf, X_train, y_train, "1 estimators")
 
     plt.plot()
 
-    plt.subplot(1, 3, 3)
-    plot_model(clf100, X_train, y_train, "Noise based - 1000")
+    plt.subplot(1, 4, 2)
+    plot_model(clf10, X_train, y_train, "10 estimators")
 
     plt.plot()
 
-    # plt.tight_layout()
-    plt.show()
+    plt.subplot(1, 4, 3)
+    plot_model(clf100, X_train, y_train, "100 estimators")
+
+    plt.plot()
+
+    plt.subplot(1, 4, 4)
+    plot_model(clf1000, X_train, y_train, "1000 estimators")
+
+    plt.plot()
+
+    plt.tight_layout()
+    # plt.show()
+
+    plt.savefig(properties.PLOTS + "ALFREDO/PNG/4-plots_" + model + ".png")
+    plt.savefig(properties.PLOTS + "ALFREDO/EPS/4-plots_" + model + ".eps")
 
 
 if __name__ == "__main__":

@@ -66,7 +66,7 @@ def main():
     n_estimators = 1000
 
     tree_clf = tree.DecisionTreeClassifier()
-    alf = Alfredo(n_trees=n_estimators, perc=0.5, bagg=True)
+    alf = Alfredo(n_trees=n_estimators, perc=0.75, bagg=True)
     noise_clf = ClasificadorRuido(n_trees=n_estimators, perc=0.5)
     boosting = AdaBoostClassifier(n_estimators=n_estimators)
     bagging = BaggingClassifier(n_estimators=n_estimators)

@@ -14,9 +14,6 @@ def main():
     # DIR = properties.SYNTHETIC
     DIR = properties.DATASETS
 
-    if model.find(".") > -1:
-        DIR = properties.DATASETS
-
     data = np.load(properties.DATA + DIR + model + "_data.npy")
     rfscore = np.load(properties.DATA + DIR + model + "_data_random-forest.npy")
     treescore = np.load(properties.DATA + DIR + model + "_data_tree.npy")
@@ -35,7 +32,8 @@ def main():
 
     print("MODELO: " + model)
     print()
-    print("\t" + properties.COLOR_BLUE + "ALFREDO: " + properties.END_C + str(data.mean(axis=0)[74, 99]))
+    print("\t" + properties.COLOR_BLUE + "ALFREDO 50: " + properties.END_C + str(data.mean(axis=0)[49, 99]))
+    print("\t" + properties.COLOR_BLUE + "ALFREDO 75: " + properties.END_C + str(data.mean(axis=0)[74, 99]))
     print("\t" + properties.COLOR_BLUE + "RANDOM F.: " + properties.END_C + str(rfscore.mean()))
     print("\t" + properties.COLOR_BLUE + "BOOSTING: " + properties.END_C + str(boostingscore.mean()))
     print("\t" + properties.COLOR_BLUE + "BAGGING: " + properties.END_C + str(baggingscore.mean()))
@@ -46,7 +44,7 @@ def main():
     print(data.shape)
 
     model_title = str.upper(model[0]) + model[1:]
-    plt.figure(figsize=(20, 10))
+    plt.figure(figsize=(10, 5))
 
     """
     ----------------------------------------
@@ -63,10 +61,14 @@ def main():
     for i in lst:
         plt.plot(np.arange(0.02, 0.99, 0.01), data.mean(axis=0)[1:, i], linestyle='-')
 
-    plt.axhline(y=boostingscore.mean(), color='m', linestyle='-')
+    plt.axhline(y=rfscore.mean(), color='m', linestyle='-')
+    plt.axhline(y=boostingscore.mean(), color='g', linestyle='-')
+    plt.axhline(y=baggingscore.mean(), color='y', linestyle='-')
 
     legend = list(map(lambda x: str(x+1), [0, 4, 9, 49, 99]))
     legend.append('RF')
+    legend.append('Ada.')
+    legend.append('Bagg.')
 
     plt.legend(legend, loc='upper right', ncol=2)
 
@@ -95,9 +97,13 @@ def main():
         plt.plot(range(1, 101, 1), data.mean(axis=0)[i, :], linestyle='-')
 
     plt.axhline(y=rfscore.mean(), color='m', linestyle='-')
+    plt.axhline(y=boostingscore.mean(), color='g', linestyle='-')
+    plt.axhline(y=baggingscore.mean(), color='y', linestyle='-')
 
-    legend = list(map(lambda x: str(x / 100), [2, 5, 10, 50, 99]))
+    legend = list(map(lambda x: str(x / 100), [2, 5, 10, 50, 98]))
     legend.append('RF')
+    legend.append('Ada.')
+    legend.append('Bagg.')
 
     plt.legend(legend, loc='upper right', ncol=2)
 
@@ -108,9 +114,9 @@ def main():
 
     plt.tight_layout()
 
-    plt.show()
-    # plt.savefig(properties.PLOTS + "ALFREDO/PNG/2-plots_" + model + ".png")
-    # plt.savefig(properties.PLOTS + "ALFREDO/EPS/2-plots_" + model + ".eps")
+    # plt.show()
+    plt.savefig(properties.PLOTS + "ALFREDO/PNG/2-plots_" + model + ".png")
+    plt.savefig(properties.PLOTS + "ALFREDO/EPS/2-plots_" + model + ".eps")
 
 
 if __name__ == "__main__":

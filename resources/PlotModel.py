@@ -55,7 +55,7 @@ def plot_model(clf, X, y, title):
 
     plt.contourf(xx, yy, Z)
     # plt.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor='k', alpha=0.8)
-    plt.title("{} classification".format(title))
+    plt.title("{}".format(title))
 
 def plotModel_arboles(x,y,clase,clf,axs,ind,pred_prob=None):
     x_min, x_max = x.min() - .2, x.max() + .2
