@@ -54,7 +54,13 @@ def plot_model(clf, X, y, title):
     Z = Z.reshape(xx.shape)
 
     plt.contourf(xx, yy, Z)
-    # plt.scatter(X[:, 0], X[:, 1], c=y, s=20, edgecolor='k', alpha=0.8)
+
+    aux = np.c_[X, y]
+    print('hi')
+    plt.scatter(X[np.where(aux[:, 2] == 0)[0][:50], 0], X[np.where(aux[:, 2] == 0)[0][:50], 1], c='purple', s=20, edgecolor='k', alpha=0.6)
+    plt.scatter(X[np.where(aux[:, 2] == 1)[0][:50], 0], X[np.where(aux[:, 2] == 1)[0][:50], 1], c='blue', s=20, edgecolor='k', alpha=0.6)
+    plt.scatter(X[np.where(aux[:, 2] == 2)[0][:50], 0], X[np.where(aux[:, 2] == 2)[0][:50], 1], c='yellow', s=20, edgecolor='k', alpha=0.6)
+
     plt.title("{}".format(title))
 
 def plotModel_arboles(x,y,clase,clf,axs,ind,pred_prob=None):
