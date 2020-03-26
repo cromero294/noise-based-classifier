@@ -89,7 +89,7 @@ def main():
 
     plt.title(model_title + " n. trees - err.")
 
-    lst = [1, 4, 9, 48, 97]
+    lst = [1, 4, 9, 49, 74]
 
     print(data.mean(axis=0).shape)
 
@@ -100,7 +100,7 @@ def main():
     plt.axhline(y=boostingscore.mean(), color='g', linestyle='-')
     plt.axhline(y=baggingscore.mean(), color='y', linestyle='-')
 
-    legend = list(map(lambda x: str(x / 100), [2, 5, 10, 50, 98]))
+    legend = list(map(lambda x: str(x / 100), [2, 5, 10, 50, 75]))
     legend.append('RF')
     legend.append('Ada.')
     legend.append('Bagg.')
@@ -115,8 +115,8 @@ def main():
     plt.tight_layout()
 
     # plt.show()
-    plt.savefig(properties.PLOTS + "ALFREDO/PNG/2-plots_" + model + ".png")
-    plt.savefig(properties.PLOTS + "ALFREDO/EPS/2-plots_" + model + ".eps")
+    plt.savefig(properties.PLOTS + "ALFREDO/PNG/75_2-plots_" + model + ".png")
+    plt.savefig(properties.PLOTS + "ALFREDO/EPS/75_2-plots_" + model + ".eps")
 
 
 if __name__ == "__main__":
