@@ -95,24 +95,24 @@ def main():
     clf100.fit(X_train, y_train)
     clf1000.fit(X_train, y_train)
 
-    plt.figure(figsize=(12, 3))
+    plt.figure(figsize=(12, 12))
 
-    plt.subplot(1, 4, 1)
+    plt.subplot(2, 2, 1)
     plot_model(clf, X_train, y_train, "1 estimators")
 
     plt.plot()
 
-    plt.subplot(1, 4, 2)
+    plt.subplot(2, 2, 2)
     plot_model(clf10, X_train, y_train, "10 estimators")
 
     plt.plot()
 
-    plt.subplot(1, 4, 3)
+    plt.subplot(2, 2, 3)
     plot_model(clf100, X_train, y_train, "100 estimators")
 
     plt.plot()
 
-    plt.subplot(1, 4, 4)
+    plt.subplot(2, 2, 4)
     plot_model(clf1000, X_train, y_train, "1000 estimators")
 
     plt.plot()

@@ -26,23 +26,30 @@ def main():
     ----------------------------------------
     """
     res = data.mean(axis=0)[:, 99]
-    print(res)
-    print(np.amin(res))
+    # print(res)
+    # print(np.amin(res))
     print(np.where(res == np.amin(res))[0])
 
     print("MODELO: " + model)
     print()
     print("\t" + properties.COLOR_BLUE + "ALFREDO 50: " + properties.END_C + str(data.mean(axis=0)[49, 99]))
+    print()
+    print("\t" + properties.COLOR_BLUE + "TREE: " + properties.END_C + str(treescore.mean()))
     print("\t" + properties.COLOR_BLUE + "ALFREDO 75: " + properties.END_C + str(data.mean(axis=0)[74, 99]))
     print("\t" + properties.COLOR_BLUE + "RANDOM F.: " + properties.END_C + str(rfscore.mean()))
     print("\t" + properties.COLOR_BLUE + "BOOSTING: " + properties.END_C + str(boostingscore.mean()))
     print("\t" + properties.COLOR_BLUE + "BAGGING: " + properties.END_C + str(baggingscore.mean()))
-    print("\t" + properties.COLOR_BLUE + "TREE: " + properties.END_C + str(treescore.mean()))
+    print()
+    print("\t" + properties.COLOR_BLUE + "TREE STD: " + properties.END_C + str(treescore.std()))
+    print("\t" + properties.COLOR_BLUE + "ALFREDO 75 STD: " + properties.END_C + str(data.std(axis=0)[74, 99]))
+    print("\t" + properties.COLOR_BLUE + "RANDOM F. STD: " + properties.END_C + str(rfscore.std()))
+    print("\t" + properties.COLOR_BLUE + "BOOSTING STD: " + properties.END_C + str(boostingscore.std()))
+    print("\t" + properties.COLOR_BLUE + "BAGGING STD: " + properties.END_C + str(baggingscore.std()))
 
-    # -------------------------------------- #
-
-    print(data.shape)
-
+    # # -------------------------------------- #
+    #
+    # print(data.shape)
+    #
     model_title = str.upper(model[0]) + model[1:]
     plt.figure(figsize=(10, 5))
 
@@ -61,16 +68,16 @@ def main():
     for i in lst:
         plt.plot(np.arange(0.02, 0.99, 0.01), data.mean(axis=0)[1:, i], linestyle='-')
 
-    plt.axhline(y=rfscore.mean(), color='m', linestyle='-')
-    plt.axhline(y=boostingscore.mean(), color='g', linestyle='-')
-    plt.axhline(y=baggingscore.mean(), color='y', linestyle='-')
+    # plt.axhline(y=rfscore.mean(), color='m', linestyle='-')
+    # plt.axhline(y=boostingscore.mean(), color='g', linestyle='-')
+    # plt.axhline(y=baggingscore.mean(), color='y', linestyle='-')
 
-    legend = list(map(lambda x: str(x+1), [0, 4, 9, 49, 99]))
-    legend.append('RF')
-    legend.append('Ada.')
-    legend.append('Bagg.')
-
-    plt.legend(legend, loc='upper right', ncol=2)
+    # legend = list(map(lambda x: str(x+1), [0, 4, 9, 49, 99]))
+    # legend.append('RF')
+    # legend.append('Ada.')
+    # legend.append('Bagg.')
+    #
+    # plt.legend(legend, loc='upper right', ncol=2)
 
     plt.ylabel("Err")
     plt.xlabel("Data randomization")
@@ -114,9 +121,9 @@ def main():
 
     plt.tight_layout()
 
-    # plt.show()
-    plt.savefig(properties.PLOTS + "ALFREDO/PNG/75_2-plots_" + model + ".png")
-    plt.savefig(properties.PLOTS + "ALFREDO/EPS/75_2-plots_" + model + ".eps")
+    plt.show()
+    # plt.savefig(properties.PLOTS + "ALFREDO/PNG/75_2-plots_" + model + ".png")
+    # plt.savefig(properties.PLOTS + "ALFREDO/EPS/75_2-plots_" + model + ".eps")
 
 
 if __name__ == "__main__":
